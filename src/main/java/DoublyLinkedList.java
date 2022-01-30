@@ -34,6 +34,10 @@ public class DoublyLinkedList<T> {
     private Node<T> tail;
     private int nElements;
 
+    public int size() {
+        return nElements;
+    }
+
     public void addFront(T value) {
         head = new Node<>(null, head, value);
         nElements++;
