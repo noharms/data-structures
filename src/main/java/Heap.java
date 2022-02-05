@@ -96,31 +96,15 @@ public class Heap<T extends Comparable<T>> {
             return value;
         }
 
-        // cache values of old root
         T value = root.value;
-        Node<T> leftChild = root.left;
-        Node<T> rightChild = root.right;
 
         // remove last node and insert it as new root
         Node<T> removed = removeBottomRightNode();
-        removed.top = null;
-        root = removed;
-        if (leftChild != removed) {
-            removed.left = leftChild;
-            if (leftChild != null) {
-                leftChild.top = removed;
-            }
-        }
-        if (rightChild != removed) {
-            removed.right = rightChild;
-            if (rightChild != null) {
-                rightChild.top = removed;
-            }
-        }
+        root.value = removed.value;
         --nElements;
 
         // reinstall heap order (note this involves upwards swaps, that reset root if necessary)
-        bubbleDown(removed);
+        bubbleDown(root);
 
         return value;
     }
@@ -157,71 +141,11 @@ public class Heap<T extends Comparable<T>> {
         }
     }
 
-    /*
-                        topTop
-                      /         \
-                   top           ...
-                  /    \
-                 x      node
-                      /      \
-                     y        z
-
-        to
-                        topTop
-                      /          \
-                   node           ...
-                  /    \
-                 x      top
-                      /      \
-                     y        z
-
-        reqires to change up and down references to x, y, z and topTop
-    */
     private void swapUpwards(Node<T> node) {
-        Node<T> top = node.top;
-        Node<T> leftChildNode = node.left;
-        Node<T> rightChildNode = node.right;
-
-        Node<T> topTop = top.top;
-        Node<T> leftChildTop = top.left;
-        Node<T> rightChildTop = top.right;
-
-        // new relations between node and topTop
-        node.top = topTop;
-        if (topTop == null) {
-            root = node;
-        } else {
-            if (topTop.left == top) {
-                topTop.left = node;
-            } else {
-                topTop.right = node;
-            }
-        }
-
-        // new relations between top and node
-        top.top = node;
-        if (top.left == node) {
-            node.left = top;
-            node.right = rightChildTop;
-            if (rightChildTop != null) {
-                rightChildTop.top = node;
-            }
-        } else {
-            node.left = leftChildTop;
-            if (leftChildTop != null) {
-                leftChildTop.top = node;
-            }
-            node.right = top;
-        }
-
-        // new relations between children and top
-        top.left = leftChildNode;
-        if (leftChildNode != null) {
-            leftChildNode.top = top;
-        }
-        top.right = rightChildNode;
-        if (rightChildNode != null) {
-            rightChildNode.top = top;
+        if (node != null && node.top != null) {
+            T valueTop = node.top.value;
+            node.top.value = node.value;
+            node.value = valueTop;
         }
     }
 
