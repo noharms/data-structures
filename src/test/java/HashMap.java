@@ -18,7 +18,7 @@ public class HashMap<K, V> {
     private static record KeyValuePair<K, V> (K key, V value) {}
 
     private static final double LOAD_THRESHOLD = 0.5;
-    private static final int INITIAL_CAPACITY = 16;
+    private static final int INITIAL_CAPACITY = 2; // using a low value for testing - change if used productively
 
     private ArrayList<LinkedList<KeyValuePair<K, V>>> memory;
     private int capacity;
@@ -34,7 +34,7 @@ public class HashMap<K, V> {
     }
 
     private int computeHashCode(K key) {
-        return key.hashCode() % memory.size();
+        return (key.hashCode() & 0x7fffffff) % capacity;
     }
 
     private static <K, V> ArrayList<LinkedList<KeyValuePair<K, V>>> allocateNewMemory(int size) {
