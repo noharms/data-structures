@@ -8,7 +8,7 @@
  *     <li>void add(T value) in O(log n)</li>
  * </ul>
  */
-public class Heap<T extends Comparable<T>> {
+public class HeapNodeBased<T extends Comparable<T>> {
 
     // in a complete binary tree we can describe the slots by their level and the offset from the leftmost slot in level
     private static record LevelIndices(int level, int offset) {

@@ -2,21 +2,21 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class HeapTest {
+class HeapNodeBasedTest {
 
     @Test
     public void emptyHeap_peek_throws() {
-        assertThrows(Heap.HeapUnderflowException.class, () -> new Heap<>().peek());
+        assertThrows(HeapNodeBased.HeapUnderflowException.class, () -> new HeapNodeBased<>().peek());
     }
 
     @Test
     public void emptyHeap_pop_throws() {
-        assertThrows(Heap.HeapUnderflowException.class, () -> new Heap<>().pop());
+        assertThrows(HeapNodeBased.HeapUnderflowException.class, () -> new HeapNodeBased<>().pop());
     }
 
     @Test
     public void addOneElement_peek_pop() {
-        Heap<Integer> heap = new Heap<>();
+        HeapNodeBased<Integer> heap = new HeapNodeBased<>();
         heap.add(1);
         assertEquals(1, heap.peek());
         assertEquals(1, heap.pop());
@@ -24,7 +24,7 @@ class HeapTest {
 
     @Test
     public void addMultipleElements_peek_pop() {
-        Heap<Integer> heap = new Heap<>();
+        HeapNodeBased<Integer> heap = new HeapNodeBased<>();
         heap.add(1);
         heap.add(3);
         heap.add(2);
@@ -34,12 +34,12 @@ class HeapTest {
         assertEquals(2, heap.pop());
         assertEquals(1, heap.peek());
         assertEquals(1, heap.pop());
-        assertThrows(Heap.HeapUnderflowException.class, heap::pop);
+        assertThrows(HeapNodeBased.HeapUnderflowException.class, heap::pop);
     }
 
     @Test
     public void addSameElements_peek_pop() {
-        Heap<Integer> heap = new Heap<>();
+        HeapNodeBased<Integer> heap = new HeapNodeBased<>();
         heap.add(1);
         heap.add(1);
         heap.add(1);
@@ -49,12 +49,12 @@ class HeapTest {
         assertEquals(1, heap.pop());
         assertEquals(1, heap.peek());
         assertEquals(1, heap.pop());
-        assertThrows(Heap.HeapUnderflowException.class, heap::pop);
+        assertThrows(HeapNodeBased.HeapUnderflowException.class, heap::pop);
     }
 
     @Test
     public void addMultipleElements_peek_pop_addAgain() {
-        Heap<Integer> heap = new Heap<>();
+        HeapNodeBased<Integer> heap = new HeapNodeBased<>();
         heap.add(1);
         heap.add(6);
         heap.add(5);
@@ -73,7 +73,7 @@ class HeapTest {
         assertEquals(2, heap.pop());
         assertEquals(1, heap.peek());
         assertEquals(1, heap.pop());
-        assertThrows(Heap.HeapUnderflowException.class, heap::pop);
+        assertThrows(HeapNodeBased.HeapUnderflowException.class, heap::pop);
     }
 
 }
