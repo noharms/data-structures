@@ -42,4 +42,27 @@ class Node<K extends Comparable<K>, V> {
         }
     }
 
+    // returns null if candidate is not the parent of the match but the match or if no match in candidate's can be found
+    Node<K, V> findParentNode(Node<K, V> target) {
+        K searchKey = target.key();
+        int compareResult = key().compareTo(searchKey);
+        if (compareResult == 0) {
+            return null; // this can only happen if in the first-non recursive call target is the match
+        } else if (compareResult < 0) {
+            if (right == null) {
+                return null;
+            } else {
+                boolean rightChildIsMatch = right.key().compareTo(searchKey) == 0;
+                return rightChildIsMatch ? this : right.findParentNode(target);
+            }
+        } else {
+            if (left == null) {
+                return null;
+            } else {
+                boolean leftChildIsMatch = left.key().compareTo(searchKey) == 0;
+                return leftChildIsMatch ? this : left.findParentNode(target);
+            }
+        }
+    }
+
 }
