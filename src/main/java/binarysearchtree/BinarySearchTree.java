@@ -1,3 +1,5 @@
+package binarysearchtree;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
@@ -5,95 +7,18 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * A Maximovich-Velsky-Landis binary search tree that has a guaranteed height of O(log(n)). Duplicate keys
- * are not allowed.
+ * An unbalanced binary search tree. Duplicate keys are not allowed.
  *
  * <ul>
- *     <li>V search(K key) in O(log n)</li>
- *     <li>void add(K key, V value) in O(log n)</li>
- *     <li>V remove (K key) in O(log n)</li>
+ *     <li>V search(K key) in O(n)</li>
+ *     <li>void add(K key, V value) in O(n)</li>
+ *     <li>V remove (K key) in O(n)</li>
  * </ul>
  *
  * @param <K> generic type parameter for the type of the keys
  * @param <V> generic type parameter for the type of the values
  */
-public class AvlTree<K extends Comparable<K>, V> {
-
-    private static record KeyValuePair<U extends Comparable<U>, W>(U key, W value) {
-    }
-
-    private static class Node<U extends Comparable<U>, W> {
-        private KeyValuePair<U, W> keyValuePair;
-        private Node<U, W> left;
-        private Node<U, W> right;
-        private int height; // is 0, if both children are null
-
-        private Node(KeyValuePair<U, W> keyValuePair) {
-            this.keyValuePair = keyValuePair;
-        }
-
-        private U key() {
-            return keyValuePair.key;
-        }
-
-        private void recomputeHeight() {
-            height = Math.max(getHeight(left), getHeight(right)) + 1;
-        }
-
-        private int computeBalanceFactor() {
-            return getHeight(right) - getHeight(left);
-        }
-
-        private Node<U, W> rotateRight() {
-            Node<U, W> pivot = this.left;
-            Node<U, W> rightChildPivot = pivot.right;
-
-            // make pivot parent of this node
-            pivot.right = this;
-
-            // relocate old child of pivot
-            this.left = rightChildPivot;
-
-            // recompute heights (caveat: order is important, because pivot is above this node now)
-            recomputeHeight();
-            pivot.recomputeHeight();
-
-            return pivot;
-        }
-
-        private Node<U, W> rotateLeft() {
-            Node<U, W> pivot = this.right;
-            Node<U, W> leftChildPivot = pivot.left;
-
-            // make pivot parent of this node
-            pivot.right = this;
-
-            // relocate old child of pivot
-            this.right = leftChildPivot;
-
-            // recompute heights (caveat: order is important, because pivot is above this node now)
-            recomputeHeight();
-            pivot.recomputeHeight();
-
-            return pivot;
-        }
-
-        private @Nullable Node<U, W> findInOrderSuccessor() {
-            return findMinimum(right);
-        }
-
-        public int nChildren() {
-            if (left == null && right == null) {
-                return 0;
-            } else if (left != null && right != null) {
-                return 2;
-            } else {
-                return 1;
-            }
-
-        }
-
-    }
+public class BinarySearchTree<K extends Comparable<K>, V> {
 
     private int nElements;
     private Node<K, V> root;
@@ -106,7 +31,11 @@ public class AvlTree<K extends Comparable<K>, V> {
         return nElements == 0;
     }
 
-    private static <U extends Comparable<U>, W> Node<U, W> findMinimum(Node<U, W> node) {
+    private @Nullable Node<K, V> findInOrderSuccessor(Node<K, V> node) {
+        return findMinimum(node.right);
+    }
+
+    static <U extends Comparable<U>, W> Node<U, W> findMinimum(Node<U, W> node) {
         if (node == null) {
             return null;
         }
@@ -116,7 +45,6 @@ public class AvlTree<K extends Comparable<K>, V> {
         }
         return minimum;
     }
-
 
     public List<Node<K, V>> inOrder() {
         List<Node<K, V>> result = new LinkedList<>();
@@ -134,13 +62,9 @@ public class AvlTree<K extends Comparable<K>, V> {
         }
     }
 
-    private static <U extends Comparable<U>, W> int getHeight(Node<U, W> node) {
-        return node != null ? node.height : -1;
-    }
-
     public Optional<V> search(K searchKey) {
         Node<K, V> result = searchNode(searchKey, root);
-        return result == null ? Optional.empty() : Optional.of(result.keyValuePair.value);
+        return result == null ? Optional.empty() : Optional.of(result.value());
     }
 
     private Node<K, V> searchNode(K searchKey, Node<K, V> current) {
@@ -160,7 +84,7 @@ public class AvlTree<K extends Comparable<K>, V> {
 
     public void add(K key, V value) {
         Node<K, V> parentForInsert = searchParentForInsert(key, root);
-        Node<K, V> newNode = new Node<>(new KeyValuePair<>(key, value));
+        Node<K, V> newNode = Node.of(key, value);
         if (newNode.key().compareTo(parentForInsert.key()) < 0) {
             parentForInsert.left = newNode;
         } else {
@@ -203,7 +127,7 @@ public class AvlTree<K extends Comparable<K>, V> {
             removeChildWith2GrandChildren(parentOfMatch);
         }
         --nElements;
-        return Optional.of(match.keyValuePair.value);
+        return Optional.of(match.value());
     }
 
     private void removeLeftChild(Node<K, V> node) {
