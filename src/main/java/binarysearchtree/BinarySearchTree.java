@@ -80,29 +80,34 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
     }
 
     public void add(K key, V value) {
-        Node<K, V> newNode = Node.of(key, value);
-        if (isEmpty()) {
-            root = newNode;
-        } else {
-            Node<K, V> parentForInsert = searchParentForInsert(key, root);
-            if (newNode.key().compareTo(parentForInsert.key()) < 0) {
-                parentForInsert.left = newNode;
-            } else {
-                parentForInsert.right = newNode;
-            }
-        }
+        Node<K, V> newNode = new Node<>(new Node.KeyValuePair<>(key, value));
         ++nElements;
-    }
 
-    private Node<K, V> searchParentForInsert(K searchKey, Node<K, V> current) {
-        K currentKey = current.key();
-        int compareResult = currentKey.compareTo(searchKey);
-        if (compareResult == 0) {
-            throw new IllegalArgumentException("Duplicate keys are not allowed. Remove key " + searchKey + "first.");
-        } else if (compareResult < 0) {
-            return current.right == null ? current : searchParentForInsert(searchKey, current.right);
-        } else {
-            return current.left == null ? current : searchParentForInsert(searchKey, current.left);
+        if (root == null) {
+            root = newNode;
+            return;
+        }
+
+        Node<K, V> current = root;
+        while (true) {
+            if (key.compareTo(current.key()) < 0) {
+                if (current.left != null) {
+                    current = current.left;
+                } else {
+                    current.left = newNode;
+                    return;
+                }
+            } else if (key.compareTo(current.key()) > 0) {
+                if (current.right != null) {
+                    current = current.right;
+                } else {
+                    current.right = newNode;
+                    return;
+                }
+            } else {
+                --nElements;
+                throw new IllegalArgumentException("Key %s already contained.".formatted(key));
+            }
         }
     }
 

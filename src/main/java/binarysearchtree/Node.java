@@ -24,6 +24,14 @@ class Node<K extends Comparable<K>, V> {
         return keyValuePair.value; 
     }
 
+    public Node<K, V> left() {
+        return left;
+    }
+
+    public Node<K, V> right() {
+        return right;
+    }
+
     int computeHeight() {
         return 1 + Math.max(computeHeight(left), computeHeight(right));
     }
