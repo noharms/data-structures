@@ -107,6 +107,9 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
     }
 
     public Optional<V> remove(K key) {
+        if (isEmpty()) {
+            return Optional.empty();
+        }
         Node<K, V> parentOfMatch = root.findParentNode(new Node<>(new Node.KeyValuePair<>(key, null)));
         if (parentOfMatch == null) {
             if (root.key().compareTo(key) != 0) {
@@ -144,13 +147,15 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
 
     private void replaceMatchWith2Children(Node<K, V> match) {
         Node<K, V> successor = findMinimum(match.right);
-        match.keyValuePair = successor.keyValuePair;
+        Node.KeyValuePair<K, V> keyValueSuccessor = successor.keyValuePair;
         Node<K, V> parentOfSuccessor = match.findParentNode(successor);
         if (parentOfSuccessor.left == successor) {
             removeLeftChild(parentOfSuccessor);
         } else {
             removeRightChild(parentOfSuccessor);
         }
+        // replace data content to effectively replace the node
+        match.keyValuePair = keyValueSuccessor;
     }
 
     private void removeLeftChild(Node<K, V> node) {
