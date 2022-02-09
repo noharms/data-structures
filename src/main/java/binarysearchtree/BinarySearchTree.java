@@ -1,9 +1,8 @@
 package binarysearchtree;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 /**
  * An unbalanced binary search tree. Duplicate keys are not allowed.
@@ -20,7 +19,7 @@ import java.util.Optional;
 public class BinarySearchTree<K extends Comparable<K>, V> {
 
     private int nElements;
-    private Node<K, V> root;
+    Node<K, V> root;
 
     public int size() {
         return nElements;
@@ -72,15 +71,37 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
         int compareResult = currentKey.compareTo(searchKey);
         if (compareResult == 0) {
             return current;
-        } else if (compareResult < 0) {
-            return searchNode(searchKey, current.right);
         } else {
-            return searchNode(searchKey, current.left);
+            return compareResult < 0 ? searchNode(searchKey, current.right) : searchNode(searchKey, current.left);
+        }
+    }
+
+    List<Node<K, V>> computePathTo(K searchKey) {
+        List<Node<K, V>> path = new ArrayList<>();
+        path.add(root);
+        computePath(searchKey, root, path);
+        return path;
+    }
+
+    private void computePath(K searchKey, Node<K, V> current, List<Node<K, V>> path) {
+        if (current == null) {
+            return;
+        }
+        K currentKey = current.key();
+        int compareResult = currentKey.compareTo(searchKey);
+        if (compareResult != 0) {
+            Node<K, V> next = compareResult < 0 ? current.right : current.left;
+            path.add(next);
+            computePath(searchKey, next, path);
         }
     }
 
     public void add(K key, V value) {
         Node<K, V> newNode = new Node<>(new Node.KeyValuePair<>(key, value));
+        addNode(newNode);
+    }
+
+    void addNode(Node<K, V> newNode) {
         ++nElements;
 
         if (root == null) {
@@ -90,14 +111,14 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
 
         Node<K, V> current = root;
         while (true) {
-            if (key.compareTo(current.key()) < 0) {
+            if (newNode.key().compareTo(current.key()) < 0) {
                 if (current.left != null) {
                     current = current.left;
                 } else {
                     current.left = newNode;
                     return;
                 }
-            } else if (key.compareTo(current.key()) > 0) {
+            } else if (newNode.key().compareTo(current.key()) > 0) {
                 if (current.right != null) {
                     current = current.right;
                 } else {
@@ -106,22 +127,27 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
                 }
             } else {
                 --nElements;
-                throw new IllegalArgumentException("Key %s already contained.".formatted(key));
+                throw new IllegalArgumentException("Key %s already contained.".formatted(newNode.key()));
             }
         }
     }
 
-    public Optional<V> remove(K key) {
+
+    public void remove(K key) {
+        replace(key);
+    }
+
+    // returns the node that replaces the removed one, or null, if none replaces it
+    @Nullable Node<K, V> replace(K key) {
         if (isEmpty()) {
-            return Optional.empty();
+            return null;
         }
         Node<K, V> parentOfMatch = root.findParentNode(new Node<>(new Node.KeyValuePair<>(key, null)));
         if (parentOfMatch == null) {
             if (root.key().compareTo(key) != 0) {
-                return Optional.empty();
+                return null;
             } else {
                 // root itself is the match
-                V value = root.value();
                 if (root.nChildren() == 0) {
                     root = null;
                 } else if (root.nChildren() == 1) {
@@ -130,23 +156,23 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
                     replaceMatchWith2Children(root);
                 }
                 --nElements;
-                return Optional.of(value);
+                return root;
             }
         } else {
             boolean isMatchLeft = parentOfMatch.left != null && parentOfMatch.left.key().compareTo(key) == 0;
             Node<K, V> match = isMatchLeft ? parentOfMatch.left : parentOfMatch.right;
-            V removedValue = match.value();
+            Node<K, V> replacement = match;
             if (match.nChildren() < 2) {
                 if (isMatchLeft) {
-                    removeLeftChild(parentOfMatch);
+                    replacement = removeLeftChild(parentOfMatch);
                 } else {
-                    removeRightChild(parentOfMatch);
+                    replacement = removeRightChild(parentOfMatch);
                 }
             } else {
                 replaceMatchWith2Children(match);
             }
             --nElements;
-            return Optional.of(removedValue);
+            return replacement;
         }
     }
 
@@ -163,7 +189,7 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
         match.keyValuePair = keyValueSuccessor;
     }
 
-    private void removeLeftChild(Node<K, V> node) {
+    private @Nullable Node<K, V> removeLeftChild(Node<K, V> node) {
         Node<K, V> toBeRemoved = node.left;
         Node<K, V> replacement = null;
         if (toBeRemoved.nChildren() == 1) {
@@ -172,9 +198,10 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
             throw new IllegalArgumentException("Accepting only nodes with 0 or 1 child.");
         }
         node.left = replacement;
+        return replacement;
     }
 
-    private void removeRightChild(Node<K, V> node) {
+    private @Nullable Node<K, V> removeRightChild(Node<K, V> node) {
         Node<K, V> toBeRemoved = node.right;
         Node<K, V> replacement = null;
         if (toBeRemoved.nChildren() == 1) {
@@ -183,6 +210,7 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
             throw new IllegalArgumentException("Accepting only nodes with 0 or 1 child.");
         }
         node.right = replacement;
+        return replacement;
     }
 
 }

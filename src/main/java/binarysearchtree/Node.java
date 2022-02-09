@@ -36,7 +36,7 @@ class Node<K extends Comparable<K>, V> {
         return 1 + Math.max(computeHeight(left), computeHeight(right));
     }
 
-    private static <U extends Comparable<U>, W> int computeHeight(Node<U, W> node) {
+    static <U extends Comparable<U>, W> int computeHeight(Node<U, W> node) {
         return node != null ? node.computeHeight() : 0;
     }
 
