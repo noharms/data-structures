@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
  */
 public class WeightedGraph<T> extends Graph<T> {
 
+    private static final Integer INFINITY = Integer.MAX_VALUE;
+
     private final Map<T, Map<T, Integer>> nodesToEdges = new HashMap<>();
 
     private Integer weight(T from, T to) {
@@ -26,13 +28,21 @@ public class WeightedGraph<T> extends Graph<T> {
         nodesToEdges.put(value, new HashMap<>());
     }
 
-    public void addConnection(T from, T to, int weight) {
+    public void addDirectedEdge(T from, T to, int weight) {
+        throwIfNotFound(from);
+        throwIfNotFound(to);
+        throwIfNegative(weight);
+        nodesToEdges.get(from).put(to, weight);
+    }
+
+    public void addUndirectedEdge(T from, T to, int weight) {
         throwIfNotFound(from);
         throwIfNotFound(to);
         throwIfNegative(weight);
         nodesToEdges.get(from).put(to, weight);
         nodesToEdges.get(to).put(from, weight);
     }
+
 
     private void throwIfNegative(int weight) {
         if (weight < 0) {
@@ -48,60 +58,54 @@ public class WeightedGraph<T> extends Graph<T> {
 
     @Override
     public List<T> shortestPath(T from, T to) {
-        return djikstra(from, to);
+        throwIfNotFound(from);
+        throwIfNotFound(to);
+        return dijkstra(from, to);
     }
 
-    private List<T> djikstra(T from, T to) {
+    private List<T> dijkstra(T from, T to) {
         Set<T> visited = new HashSet<>();
-        Map<T, Integer> nodeToDistance = initializeDistances(from); // is O(n) space from beginning
-        Map<T, T> nodeToParent = new HashMap<>(); // will fill up to O(n) space
+        Map<T, Integer> nodeToDistance = initializeDistances(from);
+        Map<T, T> nodeToParent = new HashMap<>();
 
-        Optional<T> nextNode = nearestUnvisitedNode(visited, nodeToDistance);
+        Optional<T> nextNode = Optional.of(from);
         while (nextNode.isPresent() && !nextNode.get().equals(to)) {
             T current = nextNode.get();
-            int distance = nodeToDistance.get(current);
-            Set<T> neighbors = allNeighbors(current);
-            for (T neighbor : neighbors) {
-                int newDistanceToNeighbor = distance + weight(current, neighbor);
+            Set<T> unvisitedNeighbors = unvisitedNeighbors(visited, current);
+            for (T neighbor : unvisitedNeighbors) {
+                int newDistanceToNeighbor = nodeToDistance.get(current) + weight(current, neighbor);
                 if (newDistanceToNeighbor < nodeToDistance.get(neighbor)) {
                     nodeToDistance.put(neighbor, newDistanceToNeighbor);
                     nodeToParent.put(neighbor, current);
                 }
             }
+            visited.add(current);
             nextNode = nearestUnvisitedNode(visited, nodeToDistance);
         }
-
-        List<T> path = new LinkedList<>();
-        if (nextNode.isPresent()) {
-            path = backTrace(nextNode.get(), nodeToParent);
-            Collections.reverse(path);
-        }
-        return path;
+        return nextNode.isPresent() ? reconstructPath(to, nodeToParent) : new LinkedList<>();
     }
 
-    private List<T> backTrace(T node, Map<T, T> nodeToParent) {
-        List<T> pathToRoot = new LinkedList<>();
-        pathToRoot.add(node);
-        while (nodeToParent.get(node) != null) {
-            node = nodeToParent.get(node);
-            pathToRoot.add(node);
-        }
-        return pathToRoot;
+    private Set<T> unvisitedNeighbors(Set<T> visited, T current) {
+        return allNeighbors(current).stream()
+                                    .filter(neighbor -> !visited.contains(neighbor))
+                                    .collect(Collectors.toSet());
     }
 
     private Map<T, Integer> initializeDistances(T startNode) {
         Set<T> directNeighbors = allNeighbors(startNode);
-        return nodesToEdges.keySet().stream().collect(Collectors.toMap(node -> node,
-                                                                       node -> directNeighbors.contains(node) ?
-                                                                           weight(startNode, node) :
-                                                                           Integer.MAX_VALUE,
-                                                                       (key, val) -> val,
-                                                                       HashMap::new));
+        return nodesToEdges.keySet().stream()
+                           .collect(Collectors.toMap(
+                                   node -> node,
+                                   node -> directNeighbors.contains(node) ? weight(startNode, node) : INFINITY,
+                                   (key, val) -> val,
+                                   HashMap::new
+                           ));
     }
 
     private Optional<T> nearestUnvisitedNode(Set<T> visited, Map<T, Integer> nodeToMinimalDistance) {
         return nodesToEdges.keySet().stream()
                            .filter(node -> !visited.contains(node))
+                           .filter(node -> nodeToMinimalDistance.get(node) < INFINITY)
                            .min(Comparator.comparingInt(nodeToMinimalDistance::get));
     }
 

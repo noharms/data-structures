@@ -37,6 +37,8 @@ public class UnweightedGraph<T> extends Graph<T> {
 
     @Override
     public List<T> shortestPath(T from, T to) {
+        throwIfNotFound(from);
+        throwIfNotFound(to);
         return bfsPath(from, to);
     }
 
@@ -59,18 +61,7 @@ public class UnweightedGraph<T> extends Graph<T> {
                 }
             }
         }
-
-        List<T> path = new LinkedList<>();
-        if (connectionFound) {
-            path.add(to);
-            T current = to;
-            while (!current.equals(from)) {
-                current = nodeToParent.get(current);
-                path.add(current);
-            }
-            Collections.reverse(path);
-        }
-        return path;
+        return connectionFound ? reconstructPath(to, nodeToParent) : new LinkedList<>();
     }
 
 }

@@ -9,6 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UnweightedGraphTest {
 
     @Test
+    void empty_graph_shortest_path_throws() {
+        assertThrows(IllegalArgumentException.class, () -> new UnweightedGraph<>().shortestPath("Enno", "Cori"));
+    }
+
+    @Test
     void add_duplicate_throws() {
         UnweightedGraph<String> graph = new UnweightedGraph<>();
         graph.addNode("Enno");
@@ -24,15 +29,15 @@ class UnweightedGraphTest {
     }
 
     @Test
-    void shortest_path_unconnected_nodes_is_empty() {
+    void shortest_path_not_contained_nodes_throws() {
         UnweightedGraph<String> graph = new UnweightedGraph<>();
         graph.addNode("Enno");
 
-        assertEquals(emptyList(), graph.shortestPath("Enno", "Cori"));
+        assertThrows(IllegalArgumentException.class, () -> graph.shortestPath("Enno", "Cori"));
     }
 
     @Test
-    void two_unconnected_nodes() {
+    void shortest_path_unconnected_nodes_is_empty() {
         UnweightedGraph<String> graph = new UnweightedGraph<>();
         graph.addNode("Enno");
         graph.addNode("Cori");

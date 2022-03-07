@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Graph<T> {
 
@@ -24,4 +23,15 @@ public abstract class Graph<T> {
         }
     }
 
+    static <U> List<U> reconstructPath(U endNode, Map<U, U> nodeToParent) {
+        List<U> path = new LinkedList<>();
+        path.add(endNode);
+        U current = endNode;
+        while (nodeToParent.get(current) != null) {
+            current = nodeToParent.get(current);
+            path.add(current);
+        }
+        Collections.reverse(path);
+        return path;
+    }
 }
