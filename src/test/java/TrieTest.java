@@ -23,9 +23,14 @@ class TrieTest {
         assertEquals(emptyList(), trie.autoComplete(""));
         assertEquals(emptyList(), trie.autoComplete("a"));
         assertEquals(emptyList(), trie.autoComplete("A"));
-        assertEquals(emptyList(), trie.autoComplete("$"));
-        assertEquals(emptyList(), trie.autoComplete(" "));
         assertEquals(emptyList(), trie.autoComplete("abcdef"));
+    }
+
+    @Test
+    void autocomplete_non_alphabetic_characters_throws() {
+        Trie trie = new Trie();
+        assertThrows(IllegalArgumentException.class, () -> trie.autoComplete("$"));
+        assertThrows(IllegalArgumentException.class, () -> trie.autoComplete(" "));
     }
 
     @Test
@@ -65,7 +70,7 @@ class TrieTest {
     }
 
     @Test
-    void isValid_emptyPrefixGivesAllValidWords() {
+    void autoComplete_emptyPrefixGivesAllValidWords() {
         Trie trie = new Trie();
         trie.add("Hello");
         trie.add("world");
@@ -74,8 +79,15 @@ class TrieTest {
         trie.add("u?");
 
         assertEquals(List.of("are", "hello", "how", "u", "world"), trie.autoComplete(""));
-        assertEquals(List.of("are", "hello", "how", "u", "world"), trie.autoComplete(" "));
-        assertEquals(List.of("are", "hello", "how", "u", "world"), trie.autoComplete("123!?="));
+    }
+
+    @Test
+    void autoComplete_non_alphabetic_characters_throws() {
+        Trie trie = new Trie();
+        assertThrows(IllegalArgumentException.class, () -> trie.autoComplete(" "));
+        assertThrows(IllegalArgumentException.class, () -> trie.autoComplete("1"));
+        assertThrows(IllegalArgumentException.class, () -> trie.autoComplete("!"));
+        assertThrows(IllegalArgumentException.class, () -> trie.autoComplete("="));
     }
 
 
@@ -94,10 +106,10 @@ class TrieTest {
         trie.add("others");
 
         assertEquals(List.of("slow", "song", "star", "steam", "stock", "strap", "stream", "string", "stroll"),
-                     trie.autoComplete("s"));
+                trie.autoComplete("s"));
         assertEquals(List.of("slow"), trie.autoComplete("sl"));
         assertEquals(List.of("star", "steam", "stock", "strap", "stream", "string", "stroll"),
-                     trie.autoComplete("st"));
+                trie.autoComplete("st"));
         assertEquals(List.of("strap", "stream", "string", "stroll"), trie.autoComplete("str"));
     }
 }

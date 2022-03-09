@@ -71,8 +71,7 @@ public class WeightedGraph<T> extends Graph<T> {
         Optional<T> nextNode = Optional.of(from);
         while (nextNode.isPresent() && !nextNode.get().equals(to)) {
             T current = nextNode.get();
-            Set<T> unvisitedNeighbors = unvisitedNeighbors(visited, current);
-            for (T neighbor : unvisitedNeighbors) {
+            for (T neighbor : unvisitedNeighbors(current, visited)) {
                 int newDistanceToNeighbor = nodeToDistance.get(current) + weight(current, neighbor);
                 if (newDistanceToNeighbor < nodeToDistance.get(neighbor)) {
                     nodeToDistance.put(neighbor, newDistanceToNeighbor);
@@ -83,12 +82,6 @@ public class WeightedGraph<T> extends Graph<T> {
             nextNode = nearestUnvisitedNode(visited, nodeToDistance);
         }
         return nextNode.isPresent() ? reconstructPath(to, nodeToParent) : new LinkedList<>();
-    }
-
-    private Set<T> unvisitedNeighbors(Set<T> visited, T current) {
-        return allNeighbors(current).stream()
-                                    .filter(neighbor -> !visited.contains(neighbor))
-                                    .collect(Collectors.toSet());
     }
 
     private Map<T, Integer> initializeDistances(T startNode) {

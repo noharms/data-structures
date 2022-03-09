@@ -55,13 +55,32 @@ public class UnweightedGraph<T> extends Graph<T> {
                 connectionFound = true;
                 break;
             } else {
-                for (T neighbor : allNeighbors(current).stream().filter(node -> !visited.contains(node)).toList()) {
+                for (T neighbor : unvisitedNeighbors(current, visited)) {
                     nodeToParent.put(neighbor, current);
                     searchQueue.add(neighbor);
                 }
             }
         }
         return connectionFound ? reconstructPath(to, nodeToParent) : new LinkedList<>();
+    }
+
+    public boolean dfsIsConnected(T from, T to) {
+        throwIfNotFound(from);
+        throwIfNotFound(to);
+        return dfsRecursive(from, to, new HashSet<>());
+    }
+
+    private boolean dfsRecursive(T candidate, T target, HashSet<T> visited) {
+        if (candidate.equals(target)) {
+            return true;
+        }
+        visited.add(candidate);
+        for (T neighbor : unvisitedNeighbors(candidate, visited)) {
+            if (dfsRecursive(neighbor, target, visited)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

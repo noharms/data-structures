@@ -3,8 +3,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UnweightedGraphTest {
 
@@ -97,4 +96,84 @@ class UnweightedGraphTest {
         assertEquals(List.of("Cori", "Enno", "Niclas", "Moritz"), graph.shortestPath("Cori", "Moritz"));
     }
 
+    @Test
+    void dfs_same_node_is_connected() {
+        UnweightedGraph<String> graph = new UnweightedGraph<>();
+        graph.addNode("Enno");
+        assertTrue(graph.dfsIsConnected("Enno", "Enno"));
+    }
+
+    @Test
+    void dfs_empty_graph_throws() {
+        assertThrows(IllegalArgumentException.class, () -> new UnweightedGraph<String>().dfsIsConnected("X", "Y"));
+    }
+
+    @Test
+    void dfs_unconnected_nodes() {
+        UnweightedGraph<String> graph = new UnweightedGraph<>();
+        graph.addNode("Enno");
+        graph.addNode("Max");
+        assertFalse(graph.dfsIsConnected("Enno", "Max"));
+        assertFalse(graph.dfsIsConnected("Max", "Enno"));
+    }
+
+    @Test
+    void dfs_undirected_connection_neighboring() {
+        UnweightedGraph<String> graph = new UnweightedGraph<>();
+        graph.addNode("Enno");
+        graph.addNode("Cori");
+        graph.addUndirectedEdge("Enno", "Cori");
+        assertTrue(graph.dfsIsConnected("Enno", "Cori"));
+        assertTrue(graph.dfsIsConnected("Enno", "Cori"));
+    }
+
+    @Test
+    void dfs_directed_connection_neighboring() {
+        UnweightedGraph<String> graph = new UnweightedGraph<>();
+        graph.addNode("Enno");
+        graph.addNode("Cori");
+        graph.addDirectedEdge("Enno", "Cori");
+        assertTrue(graph.dfsIsConnected("Enno", "Cori"));
+        assertFalse(graph.dfsIsConnected("Cori", "Enno"));
+    }
+
+    @Test
+    void dfs_undirected_connection_over_multiple_nodes() {
+        UnweightedGraph<String> graph = new UnweightedGraph<>();
+        graph.addNode("Enno");
+        graph.addNode("Cori");
+        graph.addNode("Max");
+        graph.addNode("Moritz");
+        graph.addNode("Niclas");
+        graph.addNode("Aaron");
+        graph.addUndirectedEdge("Enno", "Cori");
+        graph.addUndirectedEdge("Enno", "Niclas");
+        graph.addUndirectedEdge("Cori", "Niclas");
+        graph.addUndirectedEdge("Cori", "Max");
+        graph.addUndirectedEdge("Max", "Moritz");
+        graph.addUndirectedEdge("Moritz", "Aaron");
+
+        assertTrue(graph.dfsIsConnected("Enno", "Aaron"));
+        assertTrue(graph.dfsIsConnected("Aaron", "Enno"));
+    }
+
+    @Test
+    void dfs_directed_connection_over_multiple_nodes() {
+        UnweightedGraph<String> graph = new UnweightedGraph<>();
+        graph.addNode("Enno");
+        graph.addNode("Cori");
+        graph.addNode("Max");
+        graph.addNode("Moritz");
+        graph.addNode("Niclas");
+        graph.addNode("Aaron");
+        graph.addDirectedEdge("Enno", "Cori");
+        graph.addDirectedEdge("Enno", "Niclas");
+        graph.addDirectedEdge("Cori", "Niclas");
+        graph.addDirectedEdge("Cori", "Max");
+        graph.addDirectedEdge("Max", "Moritz");
+        graph.addDirectedEdge("Moritz", "Aaron");
+
+        assertTrue(graph.dfsIsConnected("Enno", "Aaron"));
+        assertFalse(graph.dfsIsConnected("Aaron", "Enno"));
+    }
 }

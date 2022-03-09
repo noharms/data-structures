@@ -1,10 +1,12 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * A prefix search tree based on the lower case latin alphabet 'a-z' - upper case letters are converted to lower case
- * and non-alphabetic letters are ignored.
+ * and non-alphabetic letters throw an error.
  *
  * <ul>
  *     <li>{@code void add(String validWord} in O(1)</li>
@@ -30,10 +32,14 @@ public class Trie {
         root = new TrieNode();
     }
 
+    private boolean isValidCharacter(Character c) {
+        return c >= 'a' && c <= 'z';
+    }
+
     public void add(String validWord) {
         TrieNode current = root;
         for (char c : validWord.toLowerCase().toCharArray()) {
-            if (c >= 'a' && c <= 'z') {
+            if (isValidCharacter(c)) {
                 int index = c - 'a';
                 if (current.children[index] == null) {
                     current.children[index] = new TrieNode();
@@ -47,7 +53,7 @@ public class Trie {
     public boolean isValid(String word) {
         TrieNode current = root;
         for (char c : word.toLowerCase().toCharArray()) {
-            if (c >= 'a' && c <= 'z') {
+            if (isValidCharacter(c)) {
                 int index = c - 'a';
                 if (current.children[index] == null) {
                     return false;
@@ -60,23 +66,27 @@ public class Trie {
     }
 
     public List<String> autoComplete(String prefix) {
+        if (!prefix.toLowerCase().chars().mapToObj(c -> (char) c).allMatch(this::isValidCharacter)) {
+            throw new IllegalArgumentException("Only alphabetical characters allowed: %s".formatted(prefix));
+        }
+        String lowerCase = prefix.toLowerCase();
+        Optional<TrieNode> terminalNode = searchTerminalNode(prefix);
+        return terminalNode.isPresent() ?
+                findValidDescendants(terminalNode.get()).stream().map(lowerCase::concat).toList() :
+                Collections.emptyList();
+    }
+
+    private Optional<TrieNode> searchTerminalNode(String prefix) {
         TrieNode current = root;
-        StringBuilder cleanedPrefixBuilder = new StringBuilder();
         for (char c : prefix.toLowerCase().toCharArray()) {
-            if (c >= 'a' && c <= 'z') {
-                int index = c - 'a';
-                if (current.children[index] == null) {
-                    current = null;
-                    break;
-                } else {
-                    cleanedPrefixBuilder.append(c);
-                    current = current.children[index];
-                }
+            int index = c - 'a';
+            if (current.children[index] == null) {
+                return Optional.empty();
+            } else {
+                current = current.children[index];
             }
         }
-        TrieNode terminalNode = current;
-        String cleanedPrefix = cleanedPrefixBuilder.toString();
-        return findValidDescendants(terminalNode).stream().map(cleanedPrefix::concat).toList();
+        return Optional.of(current);
     }
 
     private List<String> findValidDescendants(TrieNode node) {
