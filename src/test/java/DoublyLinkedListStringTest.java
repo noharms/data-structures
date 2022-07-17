@@ -67,4 +67,40 @@ class DoublyLinkedListStringTest {
         assertEquals("2", list.popBack());
         assertEquals("42", list.popBack());
     }
+
+
+    @Test
+    void reverse_changes_nothing_on_empty_list() {
+        DoublyLinkedList<String> list = new DoublyLinkedList<>();
+
+        list.reverse();
+
+        assertEquals(new DoublyLinkedList<String>(), list);
+    }
+
+    @Test
+    void reverse_changes_nothing_on_one_element_list() {
+        DoublyLinkedList<String> list = new DoublyLinkedList<>();
+        list.addFront("42");
+        DoublyLinkedList<String> copy = new DoublyLinkedList<>();
+        copy.addFront("42");
+
+        list.reverse();
+
+        assertEquals(copy, list);
+    }
+
+    @Test
+    void reverse_on_multiple_element_list_works_as_expected() {
+        DoublyLinkedList<String> list = new DoublyLinkedList<>();
+        list.addBack("3");
+        list.addBack("2");
+        list.addBack("1");
+
+        list.reverse();
+
+        assertEquals("1", list.popFront());
+        assertEquals("2", list.popFront());
+        assertEquals("3", list.popFront());
+    }
 }

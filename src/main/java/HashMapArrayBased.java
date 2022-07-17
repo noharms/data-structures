@@ -13,7 +13,7 @@ import java.util.Optional;
  *     <li>V remove(K key)</li>
  * </ul>
  */
-public class HashMap<K, V> {
+public class HashMapArrayBased<K, V> {
 
     private static record KeyValuePair<K, V> (K key, V value) {}
 
@@ -24,7 +24,7 @@ public class HashMap<K, V> {
     private int capacity;
     private int nElements;
 
-    public HashMap() {
+    public HashMapArrayBased() {
         this.capacity = INITIAL_CAPACITY;
         this.memory = allocateNewMemory(capacity);
     }

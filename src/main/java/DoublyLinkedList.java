@@ -1,5 +1,7 @@
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * A double-ended doubly-linked list, holding elements of the generic type parameter T. The provided API is
  *
@@ -26,6 +28,22 @@ public class DoublyLinkedList<T> {
             this.next = next;
             this.value = value;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+            Node<?> node = (Node<?>) o;
+            return Objects.equals(prev, node.prev) && Objects.equals(next, node.next) && Objects.equals(value,
+                                                                                                        node.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(prev, next, value);
+        }
     }
 
     @Nullable
@@ -39,11 +57,16 @@ public class DoublyLinkedList<T> {
     }
 
     public void addFront(T value) {
-        head = new Node<>(null, head, value);
-        nElements++;
-        if (tail == null) {  // list was empty before
-            tail = head;
+        if (isEmpty()) {
+            Node<T> newNode = new Node<>(null, null, value);
+            head = newNode;
+            tail = newNode;
+        } else {
+            Node<T> newNode = new Node<>(null, head, value);
+            head.prev = newNode;
+            head = newNode;
         }
+        nElements++;
     }
 
     public T popFront() {
@@ -100,6 +123,36 @@ public class DoublyLinkedList<T> {
         return tail.value;
     }
 
+    public void reverse() {
+        if (nElements <= 1) {
+            return;
+        }
+
+        Node<T> old2ndNode = head.next;
+        Node<T> old2ndLastNode = tail.prev;
+
+        // reverse is easy for all "inner" nodes, that is except the head and the tail
+        Node<T> current = head.next;
+        while (current != null && current != tail) {
+            Node<T> oldNext = current.next;
+            current.next = current.prev;
+            current.prev = oldNext;
+            current = oldNext;
+        }
+
+        // care for head and tail
+        Node<T> newHead = tail;
+        newHead.prev = null;
+        newHead.next = old2ndLastNode;
+
+        Node<T> newTail = head;
+        newTail.prev = old2ndNode;
+        newTail.next = null;
+
+        head = newHead;
+        tail = newTail;
+    }
+
     private boolean isEmpty() {
         return nElements == 0;
     }
@@ -118,4 +171,18 @@ public class DoublyLinkedList<T> {
         node.next = null;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        DoublyLinkedList<?> that = (DoublyLinkedList<?>) o;
+        return nElements == that.nElements && Objects.equals(head, that.head) && Objects.equals(tail, that.tail);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(head, tail, nElements);
+    }
 }

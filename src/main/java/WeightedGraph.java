@@ -88,10 +88,10 @@ public class WeightedGraph<T> extends Graph<T> {
         Set<T> directNeighbors = allNeighbors(startNode);
         return nodesToEdges.keySet().stream()
                            .collect(Collectors.toMap(
-                                   node -> node,
-                                   node -> directNeighbors.contains(node) ? weight(startNode, node) : INFINITY,
-                                   (key, val) -> val,
-                                   HashMap::new
+                               node -> node,
+                               node -> directNeighbors.contains(node) ? weight(startNode, node) : INFINITY,
+                               (key, val) -> val,
+                               HashMap::new
                            ));
     }
 

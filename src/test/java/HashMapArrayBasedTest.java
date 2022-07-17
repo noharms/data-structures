@@ -4,19 +4,19 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class HashMapTest {
+class HashMapArrayBasedTest {
 
     @Test
     public void emptyMap_get_returnsEmptyOptional() {
-        assertEquals(Optional.empty(), new HashMap<>().get(1));
-        assertEquals(Optional.empty(), new HashMap<>().get(false));
-        assertEquals(Optional.empty(), new HashMap<>().get('1'));
-        assertEquals(Optional.empty(), new HashMap<>().get("1"));
+        assertEquals(Optional.empty(), new HashMapArrayBased<>().get(1));
+        assertEquals(Optional.empty(), new HashMapArrayBased<>().get(false));
+        assertEquals(Optional.empty(), new HashMapArrayBased<>().get('1'));
+        assertEquals(Optional.empty(), new HashMapArrayBased<>().get("1"));
     }
 
     @Test
     public void stringToInteger_add_and_get() {
-        HashMap<String, Integer> stringToInteger = new HashMap<>();
+        HashMapArrayBased<String, Integer> stringToInteger = new HashMapArrayBased<>();
         stringToInteger.add("Enno", 1);
         stringToInteger.add("Max", 2);
         stringToInteger.add("Moritz", 3);
@@ -29,7 +29,7 @@ class HashMapTest {
 
     @Test
     public void stringToInteger_add_duplicatedKey_replaceOldValue() {
-        HashMap<String, Integer> stringToInteger = new HashMap<>();
+        HashMapArrayBased<String, Integer> stringToInteger = new HashMapArrayBased<>();
         stringToInteger.add("Enno", 1);
         stringToInteger.add("Max", 2);
         stringToInteger.add("Enno", 4);
@@ -42,7 +42,7 @@ class HashMapTest {
 
     @Test
     public void charToString_add_and_get() {
-        HashMap<Character, String> charToString = new HashMap<>();
+        HashMapArrayBased<Character, String> charToString = new HashMapArrayBased<>();
         charToString.add('E', "Enno");
         charToString.add('M', "Max");
         charToString.add('M', "Moritz");
@@ -56,7 +56,7 @@ class HashMapTest {
 
     @Test
     public void add_remove_contains() {
-        HashMap<String, Integer> stringToInteger = new HashMap<>();
+        HashMapArrayBased<String, Integer> stringToInteger = new HashMapArrayBased<>();
         stringToInteger.add("Enno", 1);
         stringToInteger.add("Max", 2);
         stringToInteger.add("Moritz", 3);
@@ -78,7 +78,7 @@ class HashMapTest {
 
     @Test
     public void add_remove_get() {
-        HashMap<String, Integer> stringToInteger = new HashMap<>();
+        HashMapArrayBased<String, Integer> stringToInteger = new HashMapArrayBased<>();
         stringToInteger.add("Enno", 1);
         stringToInteger.add("Max", 2);
         stringToInteger.add("Moritz", 3);
