@@ -1,3 +1,5 @@
+package stack;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.EmptyStackException;

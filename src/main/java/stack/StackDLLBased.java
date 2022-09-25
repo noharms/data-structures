@@ -1,7 +1,11 @@
+package stack;
+
+import list.DoublyLinkedList;
+
 import java.util.EmptyStackException;
 
 /**
- * A stack data structure based on a double-linked list. No capacity limit is imposed (except physical memory).
+ * A stack data structure based on a doubly-linked list. No capacity limit is imposed (except physical memory).
  * <br>
  * <ul>
  *     <li>void push(T value) in O(1)</li>
@@ -11,11 +15,11 @@ import java.util.EmptyStackException;
  * <p>
  * Throws EmptyStackException if pop/peek is called on empty stack.
  */
-public class Stack<T> {
+public class StackDLLBased<T> {
 
     private final DoublyLinkedList<T> memory;
 
-    public Stack() {
+    public StackDLLBased() {
         memory = new DoublyLinkedList<>();
     }
 

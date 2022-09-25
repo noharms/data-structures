@@ -1,3 +1,5 @@
+package list;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -153,7 +155,7 @@ public class DoublyLinkedList<T> {
         tail = newTail;
     }
 
-    private boolean isEmpty() {
+    public boolean isEmpty() {
         return nElements == 0;
     }
 
