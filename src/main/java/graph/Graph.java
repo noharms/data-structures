@@ -1,8 +1,16 @@
+package graph;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
+/** Note: in general, since there is no order in a graph, we cannot allow duplicate values in it - we need something
+ * to uniquely identify any given node of the graph. If a client would want to have a graph with duplicate values,
+ * they would nevertheless need to put something unique to the graph, that is to distinguish the duplicate values
+ * they would need to wrap all their values and decorating them with some other identifier.
+ */
 public abstract class Graph<T> {
 
+    /** based on the equals method of the generic type T */
     abstract public boolean contains(T value);
 
     abstract public List<T> shortestPath(T from, T to);
