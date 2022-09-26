@@ -70,7 +70,7 @@ public class RootedTree<T> {
         return LEVEL_NOT_FOUND;
     }
 
-    public Map<Integer, List<TreeNode<T>>> computeLevelToNodes() {
+    public Map<Integer, List<TreeNode<T>>> computeLevelToNodesWithQueue() {
         Map<Integer, List<TreeNode<T>>> levelToNodes = new HashMap<>();
 
         QueueDLLBased<TreeNodeWithLevel<T>> queue = new QueueDLLBased<>();
@@ -89,8 +89,25 @@ public class RootedTree<T> {
         return levelToNodes;
     }
 
+    public Map<Integer, List<TreeNode<T>>> computeLevelToNodesWithTraversal() {
+        Map<Integer, List<TreeNode<T>>> levelToNodes = new HashMap<>();
+        traverseAndFill(levelToNodes, root, 0);
+        return levelToNodes;
+    }
+
+    private void traverseAndFill(Map<Integer, List<TreeNode<T>>> levelToNodes,
+                                 TreeNode<T> currentNode,
+                                 int currentLevel
+    ) {
+        levelToNodes.computeIfAbsent(currentLevel, level -> new ArrayList<>()).add(currentNode);
+        for (var child : currentNode.children()) {
+            traverseAndFill(levelToNodes, child, currentLevel + 1);
+        }
+    }
+
     /**
-     * Computes the nodes on one given level and can thus be preferable over {@link RootedTree#computeLevelToNodes()}
+     * Computes the nodes on one given level and can thus be preferable over
+     * {@link RootedTree#computeLevelToNodesWithQueue()}
      * in terms of memory costs.
      */
     public List<TreeNode<T>> findAllNodesOnLevel(int level) {

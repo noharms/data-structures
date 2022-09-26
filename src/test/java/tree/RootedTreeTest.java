@@ -95,7 +95,7 @@ class RootedTreeTest {
     }
 
     @Test
-    void computeLevelToNodes_exampleTree() {
+    void computeLevelToNodesWithQueue_exampleTree() {
         RootedTree<Integer> tree = RootedTree.from(getProgrammaticTreeSpecification(), 1);
 
         Map<Integer, List<TreeNode<Integer>>> expectedLevelToNodes = Map.of(
@@ -106,7 +106,22 @@ class RootedTreeTest {
             4, List.of(NODE_13)
         );
 
-        assertEquals(expectedLevelToNodes, tree.computeLevelToNodes());
+        assertEquals(expectedLevelToNodes, tree.computeLevelToNodesWithQueue());
+    }
+
+    @Test
+    void computeLevelToNodesWithTraversal_exampleTree() {
+        RootedTree<Integer> tree = RootedTree.from(getProgrammaticTreeSpecification(), 1);
+
+        Map<Integer, List<TreeNode<Integer>>> expectedLevelToNodes = Map.of(
+            0, List.of(NODE_1),
+            1, List.of(NODE_2, NODE_3, NODE_4, NODE_5),
+            2, List.of(NODE_6, NODE_7, NODE_8),
+            3, List.of(NODE_9, NODE_10, NODE_11, NODE_12),
+            4, List.of(NODE_13)
+        );
+
+        assertEquals(expectedLevelToNodes, tree.computeLevelToNodesWithTraversal());
     }
 
     @Test
