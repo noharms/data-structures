@@ -20,6 +20,11 @@ public class WeightedGraph<T> extends Graph<T> {
     }
 
     @Override
+    public int size() {
+        return nodesToEdges.keySet().size();
+    }
+
+    @Override
     public boolean contains(T value) {
         return nodesToEdges.containsKey(value);
     }
