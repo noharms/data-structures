@@ -18,11 +18,11 @@ public abstract class Graph<T> {
 
     abstract public List<T> shortestPath(T from, T to);
 
-    abstract Set<T> allNeighbors(T value);
+    abstract public Set<T> allNeighbors(T value);
 
-    abstract void addNode(T value);
+    abstract public void addNode(T value);
 
-    abstract int size();
+    abstract public int size();
 
     void throwIfFound(T value) {
         if (contains(value)) {

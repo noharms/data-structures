@@ -1,4 +1,7 @@
+package trie;
+
 import org.junit.jupiter.api.Test;
+import trie.Trie;
 
 import java.util.List;
 

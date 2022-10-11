@@ -17,7 +17,7 @@ public class UnweightedGraph<T> extends Graph<T> {
     }
 
     @Override
-    void addNode(T value) {
+    public void addNode(T value) {
         throwIfFound(value);
         nodesToEdges.put(value, new HashSet<>());
     }
@@ -42,7 +42,7 @@ public class UnweightedGraph<T> extends Graph<T> {
     }
 
     @Override
-    Set<T> allNeighbors(T value) {
+    public Set<T> allNeighbors(T value) {
         throwIfNotFound(value);
         return nodesToEdges.get(value);
     }

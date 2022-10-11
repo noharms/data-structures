@@ -1,3 +1,6 @@
+package map;
+
+import map.HashMapArrayBased;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;

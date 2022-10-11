@@ -1,4 +1,6 @@
-package graph;
+package graph.grid2d;
+
+import graph.UnweightedGraph;
 
 /**
  * A representation of a maze that consists of empty slots and blocked slots, where each slot may at maximum
