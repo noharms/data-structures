@@ -1,8 +1,6 @@
-package graph.grid2d;
+package graph.maze;
 
 import graph.UnweightedGraph;
-import graph.grid2d.Cell;
-import graph.grid2d.RectangularMaze;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;

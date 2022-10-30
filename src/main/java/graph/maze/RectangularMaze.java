@@ -1,4 +1,4 @@
-package graph.grid2d;
+package graph.maze;
 
 import graph.UnweightedGraph;
 
