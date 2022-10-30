@@ -99,6 +99,32 @@ class UnweightedGraphTest {
     }
 
     @Test
+    void bfs_gives_shortest_path() {
+        /*
+                Cori ---- Enno ---- Niclas ---- Moritz ---- Max
+                  |                                         |
+                  ------------- Buggi ----------------------
+
+         */
+        UnweightedGraph<String> graph = new UnweightedGraph<>();
+        graph.addNode("Cori");
+        graph.addNode("Enno");
+        graph.addNode("Max");
+        graph.addNode("Moritz");
+        graph.addNode("Niclas");
+        graph.addNode("Buggi");
+        graph.addUndirectedEdge("Cori", "Enno");
+        graph.addUndirectedEdge("Enno", "Niclas");
+        graph.addUndirectedEdge("Niclas", "Moritz");
+        graph.addUndirectedEdge("Moritz", "Max");
+        graph.addUndirectedEdge("Cori", "Buggi");
+        graph.addUndirectedEdge("Buggi", "Max");
+
+        assertEquals(List.of("Cori", "Buggi", "Max"), graph.bfsPath("Cori", "Max"));
+        assertEquals(List.of("Cori", "Buggi", "Max"), graph.shortestPath("Cori", "Max"));
+    }
+
+    @Test
     void dfs_same_node_is_connected() {
         UnweightedGraph<String> graph = new UnweightedGraph<>();
         graph.addNode("Enno");

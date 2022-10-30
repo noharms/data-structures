@@ -173,4 +173,29 @@ class WeightedGraphTest {
         assertEquals(List.of("Cori", "Enno", "Niclas", "Moritz", "Max"), graph.shortestPath("Cori", "Max"));
     }
 
+    @Test
+    void bfs_is_not_necessarily_shortest_path() {
+        /*
+                Cori -- 1 -- Enno -- 2 -- Niclas -- 3 -- Moritz -- 3 -- Max
+                  |                                                      |
+                  -------------------------- 10 -------------------------
+
+         */
+        WeightedGraph<String> graph = new WeightedGraph<>();
+        graph.addNode("Cori");
+        graph.addNode("Enno");
+        graph.addNode("Max");
+        graph.addNode("Moritz");
+        graph.addNode("Niclas");
+        graph.addNode("Buggi");
+        graph.addUndirectedEdge("Cori", "Enno", 1);
+        graph.addUndirectedEdge("Enno", "Niclas", 2);
+        graph.addUndirectedEdge("Niclas", "Moritz", 3);
+        graph.addUndirectedEdge("Moritz", "Max", 3);
+        graph.addUndirectedEdge("Cori", "Max", 10);
+
+        assertEquals(List.of("Cori", "Enno", "Niclas", "Moritz", "Max"), graph.shortestPath("Cori", "Max"));
+        assertEquals(List.of("Cori", "Max"), graph.bfsPath("Cori", "Max"));
+    }
+
 }

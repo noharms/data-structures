@@ -5,6 +5,11 @@ import graph.WeightedGraph;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A converter from the adjacency matrix representation of a matrix to the abstract {@link WeightedGraph} datastructure.
+ * <br>
+ * A graph can be represented as an adjacency matrix, in which matrix[i][j] holds the weight from node i to node j.
+ */
 public class AdjacencyConverter {
 
     private final int[][] adjacency;
