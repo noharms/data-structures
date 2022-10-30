@@ -50,7 +50,6 @@ public class WeightedGraph<T> extends Graph<T> {
         nodesToEdges.get(to).put(from, weight);
     }
 
-
     private void throwIfNegative(int weight) {
         if (weight < 0) {
             throw new IllegalArgumentException("Negative weights are not allowed - %s.".formatted(weight));
@@ -61,6 +60,22 @@ public class WeightedGraph<T> extends Graph<T> {
     public Set<T> allNeighbors(T value) {
         throwIfNotFound(value);
         return nodesToEdges.get(value).keySet();
+    }
+
+    public Set<T> allNodes() {
+        return nodesToEdges.keySet();
+    }
+
+    public Map<T, Integer> allEdges(T from) {
+        return Collections.unmodifiableMap(nodesToEdges.getOrDefault(from, new HashMap<>()));
+    }
+
+    public Set<Integer> allWeights() {
+        return allNodes().stream()
+                         .map(this::allEdges)
+                         .map(Map::values)
+                         .flatMap(Collection::stream)
+                         .collect(Collectors.toSet());
     }
 
     @Override
