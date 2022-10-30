@@ -35,6 +35,9 @@ public class WeightedGraph<T> extends Graph<T> {
         nodesToEdges.put(value, new HashMap<>());
     }
 
+    /**
+     * If the edge already exists, the weight is overwritten.
+     */
     public void addDirectedEdge(T from, T to, int weight) {
         throwIfNotFound(from);
         throwIfNotFound(to);
@@ -42,6 +45,9 @@ public class WeightedGraph<T> extends Graph<T> {
         nodesToEdges.get(from).put(to, weight);
     }
 
+    /**
+     * If the edge already exists, the weight is overwritten.
+     */
     public void addUndirectedEdge(T from, T to, int weight) {
         throwIfNotFound(from);
         throwIfNotFound(to);
@@ -70,12 +76,29 @@ public class WeightedGraph<T> extends Graph<T> {
         return Collections.unmodifiableMap(nodesToEdges.getOrDefault(from, new HashMap<>()));
     }
 
+    public int getEdge(T from, T to) {
+        return nodesToEdges.get(from).get(to);
+    }
+
     public Set<Integer> allWeights() {
         return allNodes().stream()
                          .map(this::allEdges)
                          .map(Map::values)
                          .flatMap(Collection::stream)
                          .collect(Collectors.toSet());
+    }
+
+    public WeightedGraph<T> copy() {
+        WeightedGraph<T> copy = new WeightedGraph<>();
+        for (T node : allNodes()) {
+            copy.addNode(node);
+        }
+        for (T node : allNodes()) {
+            for (var edge : allEdges(node).entrySet()) {
+                copy.addDirectedEdge(node, edge.getKey(), edge.getValue());
+            }
+        }
+        return copy;
     }
 
     @Override

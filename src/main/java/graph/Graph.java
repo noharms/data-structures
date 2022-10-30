@@ -38,10 +38,14 @@ public abstract class Graph<T> {
     }
 
     /**
-     * Finds a breadth-first path from node {@code from} to node {@code to}. If non-exists, an emptyList is returned.
+     * Finds a breadth-first path from node {@code from} to node {@code to}.
      * <br>
      * Note: this works both on a weighted and an unweighted graph -however, only on a unweighted graph does the bfs
      * path correspond to the shortest path between the two nodes.
+     *
+     * @return a list of nodes starting with {@code from} and ending with {@code to} that describes a path connecting
+     * the two nodes; the path is minimal in terms of the number of nodes contained; if no connection exists an
+     * empty list is returned
      */
     public List<T> bfsPath(T from, T to) {
         Queue<T> searchQueue = new LinkedList<>(List.of(from));
