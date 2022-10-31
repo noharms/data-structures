@@ -56,8 +56,8 @@ public class MaximumFlow {
     }
 
     private static void updateResidualGraphWeights(WeightedGraph<Integer> residualGraph,
-                                            List<Integer> pathSourceToSink,
-                                            int pathFlow
+                                                   List<Integer> pathSourceToSink,
+                                                   int pathFlow
     ) {
         for (int i = 0; i < pathSourceToSink.size() - 1; i++) {
             int fromNodeId = pathSourceToSink.get(i);
@@ -68,11 +68,27 @@ public class MaximumFlow {
             } else {
                 residualGraph.addDirectedEdge(fromNodeId, toNodeId, oldWeightForward - pathFlow);
             }
-            if (hasBackwardEdge(residualGraph, fromNodeId, toNodeId)) {
-                int oldWeightBackward = residualGraph.getEdge(toNodeId, fromNodeId);
-                residualGraph.addDirectedEdge(toNodeId, fromNodeId, oldWeightBackward + pathFlow);
-            }
+            // Caveat: we basically assume that adding a flow of x in one direction, increases the capacity
+            //         for a flow in the opposite direction by x
+            //         e.g.  if we have
+            //                                 node0 -- 1 --> node1
+            //                                  |               |
+            //                                  <------- 3 -----
+            //         and apply a flow of 1 from node0 to node 1, the updated residual graph
+            //         will have a connection
+            //
+            //                                 node0          node1
+            //                                  |               |
+            //                                  <------- 4 -----
+            // --> note: this also means, if there was no connection before, adding a flow can create a direction in the
+            //           opposite direction
+            int oldWeightBackward = hasBackwardEdge(residualGraph, fromNodeId, toNodeId)
+                ? residualGraph.getEdge(toNodeId, fromNodeId)
+                : 0;
+            residualGraph.addDirectedEdge(toNodeId, fromNodeId, oldWeightBackward + pathFlow);
+
         }
+
     }
 
     private static boolean hasBackwardEdge(WeightedGraph<Integer> residualGraph, int fromNodeId, int toNodeId) {
