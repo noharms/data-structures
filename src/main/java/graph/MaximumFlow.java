@@ -55,17 +55,21 @@ public class MaximumFlow {
         return maxFlow;
     }
 
-    private void updateResidualGraphWeights(WeightedGraph<Integer> residualGraph,
+    private static void updateResidualGraphWeights(WeightedGraph<Integer> residualGraph,
                                             List<Integer> pathSourceToSink,
                                             int pathFlow
     ) {
         for (int i = 0; i < pathSourceToSink.size() - 1; i++) {
             int fromNodeId = pathSourceToSink.get(i);
             int toNodeId = pathSourceToSink.get(i + 1);
-            int oldWeightForward = graph.getEdge(fromNodeId, toNodeId);
-            residualGraph.addDirectedEdge(fromNodeId, toNodeId, oldWeightForward - pathFlow);
+            int oldWeightForward = residualGraph.getEdge(fromNodeId, toNodeId);
+            if (oldWeightForward - pathFlow == 0) {
+                residualGraph.removeEdgeIfExisting(fromNodeId, toNodeId);
+            } else {
+                residualGraph.addDirectedEdge(fromNodeId, toNodeId, oldWeightForward - pathFlow);
+            }
             if (hasBackwardEdge(residualGraph, fromNodeId, toNodeId)) {
-                int oldWeightBackward = graph.getEdge(toNodeId, fromNodeId);
+                int oldWeightBackward = residualGraph.getEdge(toNodeId, fromNodeId);
                 residualGraph.addDirectedEdge(toNodeId, fromNodeId, oldWeightBackward + pathFlow);
             }
         }

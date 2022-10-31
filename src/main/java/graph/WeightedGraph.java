@@ -80,6 +80,15 @@ public class WeightedGraph<T> extends Graph<T> {
         return nodesToEdges.get(from).get(to);
     }
 
+    /**
+     * If an edge (with any weight) exists, it will be removed. If not, this method has no effect.
+     */
+    public void removeEdgeIfExisting(T from, T to) {
+        if (nodesToEdges.containsKey(from)) {
+            nodesToEdges.get(from).remove(to);
+        }
+    }
+
     public Set<Integer> allWeights() {
         return allNodes().stream()
                          .map(this::allEdges)
