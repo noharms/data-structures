@@ -49,39 +49,32 @@ public abstract class Graph<T> {
      */
     public List<T> bfsPath(T from, T to) {
         Queue<T> searchQueue = new LinkedList<>(List.of(from));
-        Set<T> visited = new HashSet<>();
+        Set<T> processed = new HashSet<>();
+        processed.add(from);
         Map<T, T> nodeToParent = new HashMap<>();
 
-        // contains the same elements that are in the searchQueue but as a set, in order to get contains() in O(1)
-        Set<T> currentlyInSearchQueue = new HashSet<>(Set.of(from));
-
-        boolean connectionFound = false;
-        while (!searchQueue.isEmpty()) {
-            T current = searchQueue.remove();
-            currentlyInSearchQueue.remove(current);
-            visited.add(current);
-            if (current.equals(to)) {
-                connectionFound = true;
-                break;
-            } else {
-                for (T neighbor : unvisitedNeighbors(current, visited)) {
-                    // need to check that the neighbor was not yet added to the search queue
-                    // imagine e.g. a 3x3 matrix
-                    // 000
-                    // 000
-                    // 000
-                    // when (0,0) is processed, (1,0) and (0,1) are in the search queue
-                    // when (1,0) is processed  (0,1), (2,0), (1, 1) are in the search queue
-                    // when (0,1) is processed  (2,0), (1,1) are still in the queue and (0,2), (1, 1) are the neighbors
-                    // but we dont want to add (1,1) again to the search queue
-                    if (!currentlyInSearchQueue.contains(neighbor)) {
-                        nodeToParent.put(neighbor, current);
-                        currentlyInSearchQueue.add(neighbor);
-                        searchQueue.add(neighbor);
-                    }
+        T current = null;
+        while (!searchQueue.isEmpty() && !to.equals(current)) {
+            current = searchQueue.remove();
+            for (T neighbor : allNeighbors(current)) {
+                // need to check that the neighbor was not yet added to the search queue
+                // imagine e.g. a 3x3 matrix
+                // 000
+                // 000
+                // 000
+                // when (0,0) is processed, (1,0) and (0,1) are in the search queue
+                // when (1,0) is processed  (0,1), (2,0), (1, 1) are in the search queue
+                // when (0,1) is processed  (2,0), (1,1) are still in the queue and (0,2), (1, 1) are the neighbors
+                // but we dont want to add (1,1) again to the search queue
+                if (!processed.contains(neighbor)) {
+                    processed.add(neighbor);
+                    searchQueue.add(neighbor);
+                    nodeToParent.put(neighbor, current);
                 }
             }
         }
+
+        boolean connectionFound = to.equals(current);
         return connectionFound ? reconstructPath(to, nodeToParent) : new LinkedList<>();
     }
 
