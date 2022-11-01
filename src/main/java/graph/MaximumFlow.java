@@ -45,12 +45,11 @@ public class MaximumFlow {
         WeightedGraph<Integer> residualGraph = graph.copy();
         int maxFlow = 0;
         List<Integer> pathSourceToSink = residualGraph.bfsPath(sourceId, sinkId);
-        int pathFlow = findFlowAlongPath(pathSourceToSink, residualGraph);
-        while (!pathSourceToSink.isEmpty() && pathFlow > 0) {
+        while (!pathSourceToSink.isEmpty()) {
+            int pathFlow = findFlowAlongPath(pathSourceToSink, residualGraph);
             maxFlow += pathFlow;
             updateResidualGraphWeights(residualGraph, pathSourceToSink, pathFlow);
             pathSourceToSink = residualGraph.bfsPath(sourceId, sinkId);
-            pathFlow = findFlowAlongPath(pathSourceToSink, residualGraph);
         }
         return maxFlow;
     }
