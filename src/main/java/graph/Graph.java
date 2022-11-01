@@ -58,6 +58,7 @@ public abstract class Graph<T> {
         boolean connectionFound = false;
         while (!searchQueue.isEmpty()) {
             T current = searchQueue.remove();
+            currentlyInSearchQueue.remove(current);
             visited.add(current);
             if (current.equals(to)) {
                 connectionFound = true;
