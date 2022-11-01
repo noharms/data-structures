@@ -49,8 +49,7 @@ public abstract class Graph<T> {
      */
     public List<T> bfsPath(T from, T to) {
         Queue<T> searchQueue = new LinkedList<>(List.of(from));
-        Set<T> processed = new HashSet<>();
-        processed.add(from);
+        Set<T> processed = new HashSet<>(Set.of(from));
         Map<T, T> nodeToParent = new HashMap<>();
 
         T current = null;
