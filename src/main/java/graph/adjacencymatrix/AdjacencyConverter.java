@@ -39,7 +39,10 @@ public class AdjacencyConverter {
         }
     }
 
-    public WeightedGraph<Integer> convert() {
+    /**
+     * Note: this will make a connection between all nodes, no matter what the weight on the node.
+     */
+    public WeightedGraph<Integer> connectAll() {
         WeightedGraph<Integer> graph = new WeightedGraph<>();
         addNodes(graph);
         addEdges(graph);
@@ -60,6 +63,30 @@ public class AdjacencyConverter {
     private void addNodes(WeightedGraph<Integer> graph) {
         for (int nodeId = 0; nodeId < nNodes; nodeId++) {
             graph.addNode(nodeId);
+        }
+    }
+
+    /**
+     * Differs from {@link AdjacencyConverter#connectAll()} in that it does not add edges that have a weight of
+     * {@code excludedWeight}. Typically, this is useful for graphs in which the weight is NOT the cost of the
+     * connection but the quality of the connection and some weights have a quality of 0, meaning they are actually
+     * not a connection.
+     */
+    public WeightedGraph<Integer> connectExcept(int excludedWeight) {
+        WeightedGraph<Integer> graph = new WeightedGraph<>();
+        addNodes(graph);
+        addEdgesExcept(graph, excludedWeight);
+        return graph;
+    }
+
+    private void addEdgesExcept(WeightedGraph<Integer> graph, int excludedWeight) {
+        for (int from = 0; from < nNodes; from++) {
+            for (int to = 0; to < nNodes; to++) {
+                if (from == to || adjacency[from][to] == excludedWeight) {
+                    continue;
+                }
+                graph.addDirectedEdge(from, to, adjacency[from][to]);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package graph;
 
+import graph.adjacencymatrix.AdjacencyConverter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,6 +56,13 @@ class MaximumFlowTest {
          *     |                       |                   ^
          *     |       5               v         10        |
          *     --------------------> node2 ----------------
+         *
+         *  Maximum flow:
+         *
+         *    0 -> 2 -> 3       - 5
+         *    0 -> 1 -> 3       - 5
+         *    0 -> 1 -> 2 -> 3  - 5
+         *
          */
         WeightedGraph<Integer> graph = new WeightedGraph<>();
         graph.addNode(0);
@@ -162,5 +170,45 @@ class MaximumFlowTest {
         MaximumFlow maximumFlow = new MaximumFlow(graph);
 
         assertEquals(6, maximumFlow.computeMaxFlow(0, 5));
+    }
+
+    @Test
+    void google_foobar_example() {
+        /*
+         *             inf                            6                  4
+         *     --------------------> node0 ---------------> node2 -------------> node4 ----------
+         *     |                          \                /     \                 ^             | inf
+         *     |                        -- \-------------->       \     4          |             v
+         *    source (node6)           |    \                      ---------->     | 6          sink (node7)
+         *     |                     5 |     ------- 6 ----->    ----------->-\----              ^
+         *     |                       |                    |   |              \                 | inf
+         *     --------------------> node1 ---------------> node3 -------------> node5------------
+         *             inf                           2                   6
+         *
+         *   Maximum flow:
+         *
+         *    0 -> 2 -> 4             -  4
+         *    0 -> 3 -> 5             -  6
+         *    0 -> 2 -> 5             -  2
+         *    1 -> 3 -> 4             -  2
+         *    1 -> 2 -> 5             -  2
+         *
+         *   ----> total of 16
+         */
+        int[][] adjacencies = new int[][]{
+                {0, 0, 4, 6, 0, 0, 0, 0},
+                {0, 0, 5, 2, 0, 0, 0, 0},
+                {0, 0, 0, 0, 4, 4, 0, 0},
+                {0, 0, 0, 0, 6, 6, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, Integer.MAX_VALUE},
+                {0, 0, 0, 0, 0, 0, 0, Integer.MAX_VALUE},
+                {Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0}
+        };
+
+        WeightedGraph<Integer> graph = new AdjacencyConverter(adjacencies).connectExcept(0);
+        MaximumFlow maximumFlow = new MaximumFlow(graph);
+
+        assertEquals(16, maximumFlow.computeMaxFlow(6, 7));
     }
 }
