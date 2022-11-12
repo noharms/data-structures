@@ -24,12 +24,12 @@ public class StackDLLBased<T> {
     }
 
     public void push(T value) {
-        memory.addFront(value);
+        memory.addFirst(value);
     }
 
     public T peek() {
         if (size() > 0) {
-            return memory.peekFront();
+            return memory.getFirst();
         } else {
             throw new EmptyStackException();
         }
@@ -37,7 +37,7 @@ public class StackDLLBased<T> {
 
     public T pop() {
         if (size() > 0) {
-            return memory.popFront();
+            return memory.removeFirst();
         } else {
             throw new EmptyStackException();
         }

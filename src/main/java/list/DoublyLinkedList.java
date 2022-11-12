@@ -2,6 +2,8 @@ package list;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -58,7 +60,7 @@ public class DoublyLinkedList<T> {
         return nElements;
     }
 
-    public void addFront(T value) {
+    public void addFirst(T value) {
         if (isEmpty()) {
             Node<T> newNode = new Node<>(null, null, value);
             head = newNode;
@@ -71,7 +73,7 @@ public class DoublyLinkedList<T> {
         nElements++;
     }
 
-    public T popFront() {
+    public T removeFirst() {
         if (isEmpty()) {
             throw new IllegalStateException("Cannot pop from an empty linked list.");
         }
@@ -82,14 +84,14 @@ public class DoublyLinkedList<T> {
         return valueToPop;
     }
 
-    public T peekFront() {
+    public T getFirst() {
         if (isEmpty()) {
-            throw new IllegalStateException("Cannot pop from an empty linked list.");
+            throw new IllegalStateException("Cannot get from an empty linked list.");
         }
         return head.value;
     }
 
-    public void addBack(T value) {
+    public void addLast(T value) {
         Node<T> oldTail = tail;
         Node<T> newNode = new Node<>(oldTail, null, value);
         if (oldTail != null) {
@@ -102,7 +104,7 @@ public class DoublyLinkedList<T> {
         }
     }
 
-    public T popBack() {
+    public T removeLast() {
         if (isEmpty()) {
             throw new IllegalStateException("Cannot pop from an empty linked list.");
         }
@@ -118,11 +120,21 @@ public class DoublyLinkedList<T> {
         return valueToPop;
     }
 
-    public T peekBack() {
+    public T getLast() {
         if (isEmpty()) {
-            throw new IllegalStateException("Cannot pop from an empty linked list.");
+            throw new IllegalStateException("Cannot get from an empty linked list.");
         }
         return tail.value;
+    }
+
+    public List<T> getAll() {
+        List<T> result = new LinkedList<>();
+        Node<T> curr = head;
+        while (curr != null) {
+            result.add(curr.value);
+            curr = curr.next;
+        }
+        return result;
     }
 
     public void reverse() {

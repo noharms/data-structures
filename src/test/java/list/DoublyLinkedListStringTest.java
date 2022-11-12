@@ -9,65 +9,65 @@ class DoublyLinkedListStringTest {
 
     @Test
     void peekFront_emptyList_throws() {
-        assertThrows(IllegalStateException.class, new DoublyLinkedList<String>()::peekFront);
+        assertThrows(IllegalStateException.class, new DoublyLinkedList<String>()::getFirst);
     }
 
     @Test
     void peekBack_emptyList_throws() {
-        assertThrows(IllegalStateException.class, new DoublyLinkedList<String>()::peekBack);
+        assertThrows(IllegalStateException.class, new DoublyLinkedList<String>()::getLast);
     }
 
     @Test
     void popFront_emptyList_throws() {
-        assertThrows(IllegalStateException.class, new DoublyLinkedList<String>()::popFront);
+        assertThrows(IllegalStateException.class, new DoublyLinkedList<String>()::removeFirst);
     }
 
     @Test
     void popBack_emptyList_throws() {
-        assertThrows(IllegalStateException.class, new DoublyLinkedList<String>()::popBack);
+        assertThrows(IllegalStateException.class, new DoublyLinkedList<String>()::removeLast);
     }
 
     @Test
     void addFront_one_element_then_peek_pop() {
         DoublyLinkedList<String> list = new DoublyLinkedList<>();
-        list.addFront("42");
-        assertEquals("42", list.peekFront());
-        assertEquals("42", list.peekBack());
-        assertEquals("42", list.popFront());
-        assertThrows(IllegalStateException.class, list::peekFront);
-        assertThrows(IllegalStateException.class, list::peekBack);
+        list.addFirst("42");
+        assertEquals("42", list.getFirst());
+        assertEquals("42", list.getLast());
+        assertEquals("42", list.removeFirst());
+        assertThrows(IllegalStateException.class, list::getFirst);
+        assertThrows(IllegalStateException.class, list::getLast);
     }
 
     @Test
     void addFront_two_elements_then_peek_pop() {
         DoublyLinkedList<String> list = new DoublyLinkedList<>();
-        list.addFront("42");
-        list.addFront("1");
-        assertEquals("1", list.peekFront());
-        assertEquals("42", list.peekBack());
-        assertEquals("1", list.popFront());
-        assertEquals("42", list.peekFront());
-        assertEquals("42", list.peekBack());
-        assertEquals("42", list.popBack());
+        list.addFirst("42");
+        list.addFirst("1");
+        assertEquals("1", list.getFirst());
+        assertEquals("42", list.getLast());
+        assertEquals("1", list.removeFirst());
+        assertEquals("42", list.getFirst());
+        assertEquals("42", list.getLast());
+        assertEquals("42", list.removeLast());
     }
 
     @Test
     void addFront_addBack_multiple_elements_then_peek_pop() {
         DoublyLinkedList<String> list = new DoublyLinkedList<>();
-        list.addFront("42");
-        list.addFront("1");
-        list.addBack("2");
-        list.addFront("0");
-        list.addBack("3");
+        list.addFirst("42");
+        list.addFirst("1");
+        list.addLast("2");
+        list.addFirst("0");
+        list.addLast("3");
 
-        assertEquals("0", list.peekFront());
-        assertEquals("3", list.peekBack());
-        assertEquals("0", list.popFront());
-        assertEquals("1", list.peekFront());
-        assertEquals("3", list.peekBack());
-        assertEquals("3", list.popBack());
-        assertEquals("2", list.popBack());
-        assertEquals("42", list.popBack());
+        assertEquals("0", list.getFirst());
+        assertEquals("3", list.getLast());
+        assertEquals("0", list.removeFirst());
+        assertEquals("1", list.getFirst());
+        assertEquals("3", list.getLast());
+        assertEquals("3", list.removeLast());
+        assertEquals("2", list.removeLast());
+        assertEquals("42", list.removeLast());
     }
 
 
@@ -83,9 +83,9 @@ class DoublyLinkedListStringTest {
     @Test
     void reverse_changes_nothing_on_one_element_list() {
         DoublyLinkedList<String> list = new DoublyLinkedList<>();
-        list.addFront("42");
+        list.addFirst("42");
         DoublyLinkedList<String> copy = new DoublyLinkedList<>();
-        copy.addFront("42");
+        copy.addFirst("42");
 
         list.reverse();
 
@@ -95,14 +95,14 @@ class DoublyLinkedListStringTest {
     @Test
     void reverse_on_multiple_element_list_works_as_expected() {
         DoublyLinkedList<String> list = new DoublyLinkedList<>();
-        list.addBack("3");
-        list.addBack("2");
-        list.addBack("1");
+        list.addLast("3");
+        list.addLast("2");
+        list.addLast("1");
 
         list.reverse();
 
-        assertEquals("1", list.popFront());
-        assertEquals("2", list.popFront());
-        assertEquals("3", list.popFront());
+        assertEquals("1", list.removeFirst());
+        assertEquals("2", list.removeFirst());
+        assertEquals("3", list.removeFirst());
     }
 }

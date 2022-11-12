@@ -8,32 +8,31 @@ import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class DoublyLinkedListIntegerTest {
+class SinglyLinkedListTest {
 
     @Test
-    void peekFront_emptyList_throws() {
-        assertThrows(IllegalStateException.class, new DoublyLinkedList<Integer>()::getFirst);
+    void getFirst_emptyList_throws() {
+        assertThrows(IllegalStateException.class, new SinglyLinkedList<Integer>()::getFirst);
     }
 
     @Test
-    void peekBack_emptyList_throws() {
-        assertThrows(IllegalStateException.class, new DoublyLinkedList<Integer>()::getLast);
+    void getLast_emptyList_throws() {
+        assertThrows(IllegalStateException.class, new SinglyLinkedList<Integer>()::getLast);
     }
 
     @Test
-    void popFront_emptyList_throws() {
-        assertThrows(IllegalStateException.class, new DoublyLinkedList<Integer>()::removeFirst);
+    void removeFirst_emptyList_throws() {
+        assertThrows(IllegalStateException.class, new SinglyLinkedList<Integer>()::removeFirst);
     }
 
     @Test
-    void popBack_emptyList_throws() {
-        assertThrows(IllegalStateException.class, new DoublyLinkedList<Integer>()::removeLast);
+    void removeLast_emptyList_throws() {
+        assertThrows(IllegalStateException.class, new SinglyLinkedList<Integer>()::removeLast);
     }
-
 
     @Test
     void getAll_after_addFirst_gives_list_in_correct_order() {
-        DoublyLinkedList<Integer> list = new DoublyLinkedList<>();
+        SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
         list.addFirst(1);
         list.addFirst(2);
         list.addFirst(3);
@@ -45,7 +44,7 @@ class DoublyLinkedListIntegerTest {
 
     @Test
     void getAll_after_addLast_gives_list_in_correct_order() {
-        DoublyLinkedList<Integer> list = new DoublyLinkedList<>();
+        SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
         list.addLast(1);
         list.addLast(2);
         list.addLast(3);
@@ -57,7 +56,7 @@ class DoublyLinkedListIntegerTest {
 
     @Test
     void getAll_after_addFirst_addLast_gives_list_in_correct_order() {
-        DoublyLinkedList<Integer> list = new DoublyLinkedList<>();
+        SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
         list.addLast(1);
         list.addFirst(2);
         list.addLast(3);
@@ -70,7 +69,7 @@ class DoublyLinkedListIntegerTest {
 
     @Test
     void duplicates_works() {
-        DoublyLinkedList<Integer> list = new DoublyLinkedList<>();
+        SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
         list.addFirst(1);
         list.addFirst(1);
         list.addFirst(1);
@@ -79,8 +78,8 @@ class DoublyLinkedListIntegerTest {
     }
 
     @Test
-    void addFront_one_element_then_peek_pop() {
-        DoublyLinkedList<Integer> list = new DoublyLinkedList<>();
+    void addFirst_one_element_then_peek_pop() {
+        SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
         list.addFirst(42);
         assertEquals(42, list.getFirst());
         assertEquals(42, list.getLast());
@@ -90,8 +89,8 @@ class DoublyLinkedListIntegerTest {
     }
 
     @Test
-    void addFront_two_elements_then_peek_pop() {
-        DoublyLinkedList<Integer> list = new DoublyLinkedList<>();
+    void addFirst_two_elements_then_peek_pop() {
+        SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
         list.addFirst(42);
         list.addFirst(1);
         assertEquals(1, list.getFirst());
@@ -103,8 +102,8 @@ class DoublyLinkedListIntegerTest {
     }
 
     @Test
-    void addFront_addBack_multiple_elements_then_peek_pop() {
-        DoublyLinkedList<Integer> list = new DoublyLinkedList<>();
+    void addFirst_addLast_multiple_elements_then_peek_pop() {
+        SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
         list.addFirst(42);
         list.addFirst(1);
         list.addLast(2);
@@ -123,7 +122,7 @@ class DoublyLinkedListIntegerTest {
 
     @Test
     void reverse_changes_nothing_on_empty_list() {
-        DoublyLinkedList<Integer> list = new DoublyLinkedList<>();
+        SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
 
         list.reverse();
 
@@ -132,7 +131,7 @@ class DoublyLinkedListIntegerTest {
 
     @Test
     void reverse_changes_nothing_on_duplicates_list() {
-        DoublyLinkedList<Integer> list = new DoublyLinkedList<>();
+        SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
         list.addFirst(1);
         list.addFirst(1);
         list.addFirst(1);
@@ -144,7 +143,7 @@ class DoublyLinkedListIntegerTest {
 
     @Test
     void reverse_changes_nothing_on_one_element_list() {
-        DoublyLinkedList<Integer> list = new DoublyLinkedList<>();
+        SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
         list.addFirst(42);
 
         list.reverse();
@@ -154,7 +153,7 @@ class DoublyLinkedListIntegerTest {
 
     @Test
     void reverse_on_multiple_element_list_works_as_expected() {
-        DoublyLinkedList<Integer> list = new DoublyLinkedList<>();
+        SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
         list.addLast(3);
         list.addLast(2);
         list.addLast(1);

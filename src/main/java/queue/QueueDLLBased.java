@@ -23,25 +23,25 @@ public class QueueDLLBased<T> {
     }
 
     public void enqueue(T value) {
-        memory.addBack(value);
+        memory.addLast(value);
     }
 
     public void enqueueAll(List<T> values) {
         for (T value : values) {
-            memory.addBack(value);
+            memory.addLast(value);
         }
     }
 
     public T dequeue() {
-        return memory.popFront();
+        return memory.removeFirst();
     }
 
     public T getFirst() {
-        return memory.peekFront();
+        return memory.getFirst();
     }
 
     public T getLast() {
-        return memory.peekBack();
+        return memory.getLast();
     }
 
     public boolean isEmpty() {
