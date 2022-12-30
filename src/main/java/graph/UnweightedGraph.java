@@ -2,6 +2,16 @@ package graph;
 
 import java.util.*;
 
+/**
+ * An unweighted graph that uses a map for storing the nodes of the graph as keys, and the edges of the graph
+ * as values for each node.
+ * <br>
+ * The graph is built iteratively by the client by adding nodes and edges.
+ * <br>
+ * The graph can be directed or undirected. The client simply has to use the separate APIs when constructing the
+ * {@link UnweightedGraph#addDirectedEdge(Object, Object)}
+ * {@link UnweightedGraph#addUndirectedEdge(Object, Object)}.
+ * */
 public class UnweightedGraph<T> extends Graph<T> {
 
     private final Map<T, Set<T>> nodesToEdges = new HashMap<>();

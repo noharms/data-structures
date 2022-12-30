@@ -8,6 +8,12 @@ import java.util.stream.Collectors;
  * (given by the neighbor and the weight of the connection).
  * <br>
  * Differs from the unweighted version mainly in the {@link Graph#shortestPath(Object, Object)} algorithm.
+ * <br>
+ * The graph is built iteratively by the client by adding nodes and edges.
+ * <br>
+ * The graph can be directed or undirected. The client simply has to use the separate APIs when constructing the
+ * {@link UnweightedGraph#addDirectedEdge(Object, Object)}
+ * {@link UnweightedGraph#addUndirectedEdge(Object, Object)}.
  */
 public class WeightedGraph<T> extends Graph<T> {
 
@@ -149,10 +155,10 @@ public class WeightedGraph<T> extends Graph<T> {
     private Map<T, Integer> initialNodeToDistanceMap(T startNode) {
         return nodesToEdges.keySet().stream()
                            .collect(Collectors.toMap(
-                                   node -> node,
-                                   node -> node.equals(startNode) ? 0 : INFINITY,
-                                   (key, val) -> val,
-                                   HashMap::new
+                               node -> node,
+                               node -> node.equals(startNode) ? 0 : INFINITY,
+                               (key, val) -> val,
+                               HashMap::new
                            ));
     }
 

@@ -3,9 +3,16 @@ package graph.maze;
 import graph.UnweightedGraph;
 
 /**
- * A representation of a maze that consists of empty slots and blocked slots, where each slot may at maximum
- * have four edges: one to its top, bottom, left and right neighbor. If one of those neighbor slot is blocked,
- * we consider the two as not connected.
+ * Converts a rectangular integer maze to a graph of cells, where a cell is a pair of row-index, column-index.
+ * <br>
+ * We assume that the integer maze consists of empty slots (0) and blocked slots (any other digit than 0).
+ * So, in the graph representation of the maze each node may at maximum have four edges. One to its
+ *   top,
+ *   bottom,
+ *   left
+ *   right
+ * cell. If an adjacent slot is blocked (i.e. non-zero), we consider the two as not connected in its graph
+ * representation (so they are no neighbors in the graph, even though they are in the maze).
  */
 public class RectangularMaze {
 
@@ -58,7 +65,8 @@ public class RectangularMaze {
     }
 
     private static boolean canConnectRight(int[][] maze, int row, int col) {
-        return col < maze.length - 1 && maze[row][col + 1] == FREE_SLOT;
+        int nCols = maze[0].length;
+        return col < nCols - 1 && maze[row][col + 1] == FREE_SLOT;
     }
 
     private static boolean canConnectTop(int[][] maze, int row, int col) {
@@ -66,7 +74,8 @@ public class RectangularMaze {
     }
 
     private static boolean canConnectBottom(int[][] maze, int row, int col) {
-        return row < maze.length - 1 && maze[row + 1][col] == FREE_SLOT;
+        int nRows = maze.length;
+        return row < nRows - 1 && maze[row + 1][col] == FREE_SLOT;
     }
 
     private static void connectBottomNeighbor(UnweightedGraph<Cell> mazeGraph, int row, int col) {
