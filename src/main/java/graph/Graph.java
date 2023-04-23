@@ -57,7 +57,7 @@ public abstract class Graph<T> {
             current = searchQueue.remove();
             for (T neighbor : allNeighbors(current)) {
                 // need to check that the neighbor was not yet added to the search queue
-                // imagine e.g. a 3x3 matrix
+                // imagine e.g. a graph of cells for a 3x3 matrix
                 // 000
                 // 000
                 // 000
