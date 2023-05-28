@@ -3,8 +3,10 @@ package graph;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UnweightedGraphTest {
@@ -203,5 +205,133 @@ class UnweightedGraphTest {
 
         assertTrue(graph.dfsIsConnected("Enno", "Aaron"));
         assertFalse(graph.dfsIsConnected("Aaron", "Enno"));
+    }
+
+    @Test
+    void findComponents_on_empty_graph_gives_empty_set() {
+        assertEquals(emptySet(), new UnweightedGraph<>().findComponents());
+    }
+
+    @Test
+    void findComponents_one_node_in_graph_gives_just_one_component() {
+        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
+        unweightedGraph.addNode("Enno");
+
+        assertEquals(Set.of(Set.of("Enno")), unweightedGraph.findComponents());
+    }
+
+    @Test
+    void findComponents_two_unconnected_nodes_in_graph_gives_two_components_with_each_one_element() {
+        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
+        unweightedGraph.addNode("Enno");
+        unweightedGraph.addNode("Cori");
+
+        assertEquals(Set.of(Set.of("Enno"), Set.of("Cori")), unweightedGraph.findComponents());
+    }
+
+    @Test
+    void findComponents_two_connected_nodes_in_graph_gives_one_component_with_two_elements() {
+        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
+        unweightedGraph.addNode("Enno");
+        unweightedGraph.addNode("Cori");
+        unweightedGraph.addUndirectedEdge("Enno", "Cori");
+
+        assertEquals(Set.of(Set.of("Enno", "Cori")), unweightedGraph.findComponents());
+    }
+
+    @Test
+    void findComponents_two_components_with_each_two_elements() {
+        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
+        unweightedGraph.addNode("Enno");
+        unweightedGraph.addNode("Cori");
+        unweightedGraph.addUndirectedEdge("Enno", "Cori");
+        unweightedGraph.addNode("Moritz");
+        unweightedGraph.addNode("Niclas");
+        unweightedGraph.addUndirectedEdge("Moritz", "Niclas");
+
+        assertEquals(Set.of(Set.of("Enno", "Cori"), Set.of("Moritz", "Niclas")), unweightedGraph.findComponents());
+    }
+
+    @Test
+    void findComponents_one_chain_of_nodes_gives_one_big_component() {
+        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
+        unweightedGraph.addNode("Enno");
+        unweightedGraph.addNode("Cori");
+        unweightedGraph.addNode("Moritz");
+        unweightedGraph.addNode("Niclas");
+        unweightedGraph.addUndirectedEdge("Enno", "Cori");
+        unweightedGraph.addUndirectedEdge("Cori", "Moritz");
+        unweightedGraph.addUndirectedEdge("Moritz", "Niclas");
+
+        assertEquals(Set.of(Set.of("Enno", "Cori", "Moritz", "Niclas")), unweightedGraph.findComponents());
+    }
+
+    @Test
+    void findAllConnected_node_not_contained() {
+        assertEquals(emptySet(), new UnweightedGraph<>().findAllConnected("Enno"));
+    }
+
+    @Test
+    void findAllConnected_single_node() {
+        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
+        unweightedGraph.addNode("Enno");
+
+        assertEquals(Set.of("Enno"), unweightedGraph.findAllConnected("Enno"));
+    }
+
+    @Test
+    void findAllConnected_two_unconnected_nodes_in_graph_gives_two_components_with_each_one_element() {
+        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
+        unweightedGraph.addNode("Enno");
+        unweightedGraph.addNode("Cori");
+
+        assertEquals(Set.of("Enno"), unweightedGraph.findAllConnected("Enno"));
+        assertEquals(Set.of("Cori"), unweightedGraph.findAllConnected("Cori"));
+    }
+
+    @Test
+    void findAllConnected_two_connected_nodes_in_graph_gives_both_symmetrically() {
+        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
+        unweightedGraph.addNode("Enno");
+        unweightedGraph.addNode("Cori");
+        unweightedGraph.addUndirectedEdge("Enno", "Cori");
+
+        assertEquals(Set.of("Enno", "Cori"), unweightedGraph.findAllConnected("Enno"));
+        assertEquals(Set.of("Enno", "Cori"), unweightedGraph.findAllConnected("Cori"));
+    }
+
+    @Test
+    void findAllConnected_two_components_with_each_two_elements() {
+        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
+        unweightedGraph.addNode("Enno");
+        unweightedGraph.addNode("Cori");
+        unweightedGraph.addUndirectedEdge("Enno", "Cori");
+        unweightedGraph.addNode("Moritz");
+        unweightedGraph.addNode("Niclas");
+        unweightedGraph.addUndirectedEdge("Moritz", "Niclas");
+
+        assertEquals(Set.of("Enno", "Cori"), unweightedGraph.findAllConnected("Enno"));
+        assertEquals(Set.of("Enno", "Cori"), unweightedGraph.findAllConnected("Cori"));
+        assertEquals(Set.of("Moritz", "Niclas"), unweightedGraph.findAllConnected("Niclas"));
+        assertEquals(Set.of("Moritz", "Niclas"), unweightedGraph.findAllConnected("Moritz"));
+    }
+
+    @Test
+    void findAllConnected_one_chain_of_nodes_gives_one_big_component() {
+        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
+        unweightedGraph.addNode("Enno");
+        unweightedGraph.addNode("Cori");
+        unweightedGraph.addNode("Moritz");
+        unweightedGraph.addNode("Niclas");
+        unweightedGraph.addNode("NotConnected");
+        unweightedGraph.addUndirectedEdge("Enno", "Cori");
+        unweightedGraph.addUndirectedEdge("Cori", "Moritz");
+        unweightedGraph.addUndirectedEdge("Moritz", "Niclas");
+
+        assertEquals(Set.of("Enno", "Cori", "Moritz", "Niclas"), unweightedGraph.findAllConnected("Enno"));
+        assertEquals(Set.of("Enno", "Cori", "Moritz", "Niclas"), unweightedGraph.findAllConnected("Cori"));
+        assertEquals(Set.of("Enno", "Cori", "Moritz", "Niclas"), unweightedGraph.findAllConnected("Niclas"));
+        assertEquals(Set.of("Enno", "Cori", "Moritz", "Niclas"), unweightedGraph.findAllConnected("Moritz"));
+        assertEquals(Set.of("NotConnected"), unweightedGraph.findAllConnected("NotConnected"));
     }
 }
