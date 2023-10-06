@@ -1,6 +1,7 @@
 package graph;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptySet;
 
@@ -86,8 +87,7 @@ public class UnweightedGraph<T> extends Graph<T> {
     }
 
     /**
-     * Returns a set of all components of the graph, where a component is a set of nodes that are connected to each
-     * other but to no other node in the graph.
+     * Returns the component that the given node belongs to.
      */
     public Set<T> findAllConnected(T node) {
         if (!contains(node)) {
@@ -107,6 +107,60 @@ public class UnweightedGraph<T> extends Graph<T> {
                 findAllConnected(neighbor, visited, result);
             }
         }
+    }
+
+    /**
+     * Finds all cliques that the given node is part of. Note that also the one-element set that contains only the node
+     * is a clique (a "1-clique").
+     * <br><br>
+     * The algorithm builds the cliques in order of ascending number of elements: starting from the 1-clique that only
+     * contains the node itself; we build 2-cliques by joining the node with all its neighbors; then 3-cliques by
+     * going through all 2-cliques and for each finding the common neighbors that are not yet included in the current
+     * clique, and the for each of these disintegrated common neighbors adding them to form a new 3-clique; whenever
+     * a new clique is created it is added to a queue of candidates that might potentially be enlarged even more;
+     * once this queue is empty, we stop.
+     * <br><br>
+     * Caveat: for graphs in which all nodes are mutual neighbors, finding all sub-cliques is equivalent to finding all
+     * subsets (because each subset is a click, except that we do not have the empty set here); this means we will have
+     * O(2^n) cliques to create.
+     */
+    public Set<Set<T>> findAllCliques(T node) {
+        if (!contains(node)) {
+            return emptySet();
+        }
+        Set<T> oneClique = Set.of(node);
+        Set<Set<T>> result = new HashSet<>();
+        result.add(oneClique);
+        Queue<Set<T>> candidateCliquesForEnlargement = new ArrayDeque<>();
+        candidateCliquesForEnlargement.add(oneClique);
+        while (!candidateCliquesForEnlargement.isEmpty()) {
+            Set<T> clique = candidateCliquesForEnlargement.remove();
+            Set<T> disintegratedCommonNeighbors = findDisintegratedCommonNeighbors(clique);
+            for (T commonNeighbor : disintegratedCommonNeighbors) {
+                Set<T> oneLargerClique = new HashSet<>(clique);
+                oneLargerClique.add(commonNeighbor);
+                result.add(oneLargerClique);
+                candidateCliquesForEnlargement.add(oneLargerClique);
+            }
+        }
+        return result;
+    }
+
+    private Set<T> findDisintegratedCommonNeighbors(Set<T> clique) {
+        Set<Set<T>> memberNeighborhoods = clique.stream()
+                                                .map(this::allNeighbors)
+                                                .map(neighborhood -> excise(neighborhood, clique))
+                                                .collect(Collectors.toSet());
+        Set<T> smallestMemberNeighborhood = memberNeighborhoods.stream()
+                                                               .min(Comparator.comparingInt(Set::size))
+                                                               .orElse(emptySet());
+        return smallestMemberNeighborhood.stream()
+                                         .filter(node -> memberNeighborhoods.stream().allMatch(neighborhood -> neighborhood.contains(node)))
+                                         .collect(Collectors.toSet());
+    }
+
+    private Set<T> excise(Set<T> set, Set<T> filterOut) {
+        return set.stream().filter(node -> !filterOut.contains(node)).collect(Collectors.toSet());
     }
 
 }

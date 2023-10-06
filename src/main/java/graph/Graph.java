@@ -4,10 +4,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Note: in general, since there is no order in a graph, we cannot allow duplicate values in it - we need something
- * to uniquely identify any given node of the graph. If a client would want to have a graph with duplicate values,
- * they would nevertheless need to put something unique to the graph, that is to distinguish the duplicate values
- * they would need to wrap all their values and decorating them with some other identifier.
+ * An abstract graph, where nodes are values of a generic type T (say integer nodes).
+ * <br><br>
+ * Since our nodes are pure values (and since there is no order in a graph) we cannot allow duplicate values - we need
+ * something to uniquely identify any given node of the graph. If a client would want to have a graph with duplicate
+ * values, that would still be possible because they could wrap each value and decorate them with some other identifier.
  */
 public abstract class Graph<T> {
 
