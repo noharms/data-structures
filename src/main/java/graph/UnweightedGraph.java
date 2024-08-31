@@ -25,6 +25,11 @@ public class UnweightedGraph<T> extends Graph<T> {
     }
 
     @Override
+    public Set<T> nodes() {
+        return nodesToEdges.keySet();
+    }
+
+    @Override
     public boolean contains(T value) {
         return nodesToEdges.containsKey(value);
     }
@@ -54,10 +59,32 @@ public class UnweightedGraph<T> extends Graph<T> {
         nodesToEdges.get(to).add(from);
     }
 
+    public Set<Edge<T>> allEdges() {
+        return nodesToEdges.entrySet()
+            .stream()
+            .flatMap(
+                nodeToNeighbors -> nodeToNeighbors
+                    .getValue()
+                    .stream()
+                    .map(neighbor -> new Edge.UnweightedEdge<>(nodeToNeighbors.getKey(), neighbor))
+            )
+            .collect(Collectors.toSet());
+    }
+
     @Override
     public Set<T> allNeighbors(T value) {
         throwIfNotFound(value);
         return nodesToEdges.get(value);
+    }
+
+    @Override
+    public Set<T> allUpstreamNeighbors(T value) {
+        return nodesToEdges
+            .entrySet()
+            .stream()
+            .filter(e -> e.getValue().contains(value))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
     }
 
     @Override
@@ -148,15 +175,15 @@ public class UnweightedGraph<T> extends Graph<T> {
 
     private Set<T> findDisintegratedCommonNeighbors(Set<T> clique) {
         Set<Set<T>> memberNeighborhoods = clique.stream()
-                                                .map(this::allNeighbors)
-                                                .map(neighborhood -> excise(neighborhood, clique))
-                                                .collect(Collectors.toSet());
+            .map(this::allNeighbors)
+            .map(neighborhood -> excise(neighborhood, clique))
+            .collect(Collectors.toSet());
         Set<T> smallestMemberNeighborhood = memberNeighborhoods.stream()
-                                                               .min(Comparator.comparingInt(Set::size))
-                                                               .orElse(emptySet());
+            .min(Comparator.comparingInt(Set::size))
+            .orElse(emptySet());
         return smallestMemberNeighborhood.stream()
-                                         .filter(node -> memberNeighborhoods.stream().allMatch(neighborhood -> neighborhood.contains(node)))
-                                         .collect(Collectors.toSet());
+            .filter(node -> memberNeighborhoods.stream().allMatch(neighborhood -> neighborhood.contains(node)))
+            .collect(Collectors.toSet());
     }
 
     private Set<T> excise(Set<T> set, Set<T> filterOut) {

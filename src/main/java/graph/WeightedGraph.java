@@ -31,6 +31,11 @@ public class WeightedGraph<T> extends Graph<T> {
     }
 
     @Override
+    public Set<T> nodes() {
+        return nodesToEdges.keySet();
+    }
+
+    @Override
     public boolean contains(T value) {
         return nodesToEdges.containsKey(value);
     }
@@ -74,8 +79,30 @@ public class WeightedGraph<T> extends Graph<T> {
         return nodesToEdges.get(value).keySet();
     }
 
+    @Override
+    public Set<T> allUpstreamNeighbors(T value) {
+        return nodesToEdges
+            .entrySet()
+            .stream()
+            .filter(e -> e.getValue().containsKey(value))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
+    }
+
     public Set<T> allNodes() {
         return nodesToEdges.keySet();
+    }
+
+    public Set<Edge<T>> allEdges() {
+        return nodesToEdges.entrySet()
+            .stream()
+            .flatMap(nodeToNeighborsWithWeights -> nodeToNeighborsWithWeights
+                .getValue()
+                .entrySet()
+                .stream()
+                .map(edge -> new Edge.WeightedEdge<>(nodeToNeighborsWithWeights.getKey(), edge.getKey(), edge.getValue()))
+            )
+            .collect(Collectors.toSet());
     }
 
     public Map<T, Integer> allEdges(T from) {
@@ -97,10 +124,10 @@ public class WeightedGraph<T> extends Graph<T> {
 
     public Set<Integer> allWeights() {
         return allNodes().stream()
-                         .map(this::allEdges)
-                         .map(Map::values)
-                         .flatMap(Collection::stream)
-                         .collect(Collectors.toSet());
+            .map(this::allEdges)
+            .map(Map::values)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toSet());
     }
 
     public WeightedGraph<T> copy() {
@@ -154,19 +181,19 @@ public class WeightedGraph<T> extends Graph<T> {
 
     private Map<T, Integer> initialNodeToDistanceMap(T startNode) {
         return nodesToEdges.keySet().stream()
-                           .collect(Collectors.toMap(
-                               node -> node,
-                               node -> node.equals(startNode) ? 0 : INFINITY,
-                               (key, val) -> val,
-                               HashMap::new
-                           ));
+            .collect(Collectors.toMap(
+                node -> node,
+                node -> node.equals(startNode) ? 0 : INFINITY,
+                (key, val) -> val,
+                HashMap::new
+            ));
     }
 
     private Optional<T> nearestUnvisitedNode(Set<T> visited, Map<T, Integer> nodeToMinimalDistance) {
         return nodesToEdges.keySet().stream()
-                           .filter(node -> !visited.contains(node))
-                           .filter(node -> nodeToMinimalDistance.get(node) < INFINITY)
-                           .min(Comparator.comparingInt(nodeToMinimalDistance::get));
+            .filter(node -> !visited.contains(node))
+            .filter(node -> nodeToMinimalDistance.get(node) < INFINITY)
+            .min(Comparator.comparingInt(nodeToMinimalDistance::get));
     }
 
     /**
@@ -203,7 +230,7 @@ public class WeightedGraph<T> extends Graph<T> {
         return searchQueue.isEmpty() ? new LinkedList<>() : reconstructPath(to, nodeToParent);
     }
 
-    private static record NodeWithPriority<V>(V node, int priority) implements Comparable<NodeWithPriority<V>> {
+    private record NodeWithPriority<V>(V node, int priority) implements Comparable<NodeWithPriority<V>> {
         @Override
         public int compareTo(WeightedGraph.NodeWithPriority<V> o) {
             return priority - o.priority;

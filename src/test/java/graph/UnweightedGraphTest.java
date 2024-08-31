@@ -214,56 +214,56 @@ class UnweightedGraphTest {
 
     @Test
     void findComponents_one_node_in_graph_gives_just_one_component() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
 
-        assertEquals(Set.of(Set.of("Enno")), unweightedGraph.findComponents());
+        assertEquals(Set.of(Set.of("Enno")), g.findComponents());
     }
 
     @Test
     void findComponents_two_unconnected_nodes_in_graph_gives_two_components_with_each_one_element() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
-        unweightedGraph.addNode("Cori");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
 
-        assertEquals(Set.of(Set.of("Enno"), Set.of("Cori")), unweightedGraph.findComponents());
+        assertEquals(Set.of(Set.of("Enno"), Set.of("Cori")), g.findComponents());
     }
 
     @Test
     void findComponents_two_connected_nodes_in_graph_gives_one_component_with_two_elements() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
-        unweightedGraph.addNode("Cori");
-        unweightedGraph.addUndirectedEdge("Enno", "Cori");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
+        g.addUndirectedEdge("Enno", "Cori");
 
-        assertEquals(Set.of(Set.of("Enno", "Cori")), unweightedGraph.findComponents());
+        assertEquals(Set.of(Set.of("Enno", "Cori")), g.findComponents());
     }
 
     @Test
     void findComponents_two_components_with_each_two_elements() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
-        unweightedGraph.addNode("Cori");
-        unweightedGraph.addUndirectedEdge("Enno", "Cori");
-        unweightedGraph.addNode("Moritz");
-        unweightedGraph.addNode("Niclas");
-        unweightedGraph.addUndirectedEdge("Moritz", "Niclas");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
+        g.addUndirectedEdge("Enno", "Cori");
+        g.addNode("Moritz");
+        g.addNode("Niclas");
+        g.addUndirectedEdge("Moritz", "Niclas");
 
-        assertEquals(Set.of(Set.of("Enno", "Cori"), Set.of("Moritz", "Niclas")), unweightedGraph.findComponents());
+        assertEquals(Set.of(Set.of("Enno", "Cori"), Set.of("Moritz", "Niclas")), g.findComponents());
     }
 
     @Test
     void findComponents_one_chain_of_nodes_gives_one_big_component() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
-        unweightedGraph.addNode("Cori");
-        unweightedGraph.addNode("Moritz");
-        unweightedGraph.addNode("Niclas");
-        unweightedGraph.addUndirectedEdge("Enno", "Cori");
-        unweightedGraph.addUndirectedEdge("Cori", "Moritz");
-        unweightedGraph.addUndirectedEdge("Moritz", "Niclas");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
+        g.addNode("Moritz");
+        g.addNode("Niclas");
+        g.addUndirectedEdge("Enno", "Cori");
+        g.addUndirectedEdge("Cori", "Moritz");
+        g.addUndirectedEdge("Moritz", "Niclas");
 
-        assertEquals(Set.of(Set.of("Enno", "Cori", "Moritz", "Niclas")), unweightedGraph.findComponents());
+        assertEquals(Set.of(Set.of("Enno", "Cori", "Moritz", "Niclas")), g.findComponents());
     }
 
     @Test
@@ -273,66 +273,66 @@ class UnweightedGraphTest {
 
     @Test
     void findAllConnected_single_node() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
 
-        assertEquals(Set.of("Enno"), unweightedGraph.findAllConnected("Enno"));
+        assertEquals(Set.of("Enno"), g.findAllConnected("Enno"));
     }
 
     @Test
     void findAllConnected_two_unconnected_nodes_in_graph_gives_two_components_with_each_one_element() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
-        unweightedGraph.addNode("Cori");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
 
-        assertEquals(Set.of("Enno"), unweightedGraph.findAllConnected("Enno"));
-        assertEquals(Set.of("Cori"), unweightedGraph.findAllConnected("Cori"));
+        assertEquals(Set.of("Enno"), g.findAllConnected("Enno"));
+        assertEquals(Set.of("Cori"), g.findAllConnected("Cori"));
     }
 
     @Test
     void findAllConnected_two_connected_nodes_in_graph_gives_both_symmetrically() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
-        unweightedGraph.addNode("Cori");
-        unweightedGraph.addUndirectedEdge("Enno", "Cori");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
+        g.addUndirectedEdge("Enno", "Cori");
 
-        assertEquals(Set.of("Enno", "Cori"), unweightedGraph.findAllConnected("Enno"));
-        assertEquals(Set.of("Enno", "Cori"), unweightedGraph.findAllConnected("Cori"));
+        assertEquals(Set.of("Enno", "Cori"), g.findAllConnected("Enno"));
+        assertEquals(Set.of("Enno", "Cori"), g.findAllConnected("Cori"));
     }
 
     @Test
     void findAllConnected_two_components_with_each_two_elements() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
-        unweightedGraph.addNode("Cori");
-        unweightedGraph.addUndirectedEdge("Enno", "Cori");
-        unweightedGraph.addNode("Moritz");
-        unweightedGraph.addNode("Niclas");
-        unweightedGraph.addUndirectedEdge("Moritz", "Niclas");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
+        g.addUndirectedEdge("Enno", "Cori");
+        g.addNode("Moritz");
+        g.addNode("Niclas");
+        g.addUndirectedEdge("Moritz", "Niclas");
 
-        assertEquals(Set.of("Enno", "Cori"), unweightedGraph.findAllConnected("Enno"));
-        assertEquals(Set.of("Enno", "Cori"), unweightedGraph.findAllConnected("Cori"));
-        assertEquals(Set.of("Moritz", "Niclas"), unweightedGraph.findAllConnected("Niclas"));
-        assertEquals(Set.of("Moritz", "Niclas"), unweightedGraph.findAllConnected("Moritz"));
+        assertEquals(Set.of("Enno", "Cori"), g.findAllConnected("Enno"));
+        assertEquals(Set.of("Enno", "Cori"), g.findAllConnected("Cori"));
+        assertEquals(Set.of("Moritz", "Niclas"), g.findAllConnected("Niclas"));
+        assertEquals(Set.of("Moritz", "Niclas"), g.findAllConnected("Moritz"));
     }
 
     @Test
     void findAllConnected_one_chain_of_nodes_gives_one_big_component() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
-        unweightedGraph.addNode("Cori");
-        unweightedGraph.addNode("Moritz");
-        unweightedGraph.addNode("Niclas");
-        unweightedGraph.addNode("NotConnected");
-        unweightedGraph.addUndirectedEdge("Enno", "Cori");
-        unweightedGraph.addUndirectedEdge("Cori", "Moritz");
-        unweightedGraph.addUndirectedEdge("Moritz", "Niclas");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
+        g.addNode("Moritz");
+        g.addNode("Niclas");
+        g.addNode("NotConnected");
+        g.addUndirectedEdge("Enno", "Cori");
+        g.addUndirectedEdge("Cori", "Moritz");
+        g.addUndirectedEdge("Moritz", "Niclas");
 
-        assertEquals(Set.of("Enno", "Cori", "Moritz", "Niclas"), unweightedGraph.findAllConnected("Enno"));
-        assertEquals(Set.of("Enno", "Cori", "Moritz", "Niclas"), unweightedGraph.findAllConnected("Cori"));
-        assertEquals(Set.of("Enno", "Cori", "Moritz", "Niclas"), unweightedGraph.findAllConnected("Niclas"));
-        assertEquals(Set.of("Enno", "Cori", "Moritz", "Niclas"), unweightedGraph.findAllConnected("Moritz"));
-        assertEquals(Set.of("NotConnected"), unweightedGraph.findAllConnected("NotConnected"));
+        assertEquals(Set.of("Enno", "Cori", "Moritz", "Niclas"), g.findAllConnected("Enno"));
+        assertEquals(Set.of("Enno", "Cori", "Moritz", "Niclas"), g.findAllConnected("Cori"));
+        assertEquals(Set.of("Enno", "Cori", "Moritz", "Niclas"), g.findAllConnected("Niclas"));
+        assertEquals(Set.of("Enno", "Cori", "Moritz", "Niclas"), g.findAllConnected("Moritz"));
+        assertEquals(Set.of("NotConnected"), g.findAllConnected("NotConnected"));
     }
 
     @Test
@@ -342,42 +342,42 @@ class UnweightedGraphTest {
 
     @Test
     void findAllCliques_single_node() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
 
-        assertEquals(Set.of(Set.of("Enno")), unweightedGraph.findAllCliques("Enno"));
+        assertEquals(Set.of(Set.of("Enno")), g.findAllCliques("Enno"));
     }
 
     @Test
     void findAllCliques_two_nodes_which_are_connected() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
-        unweightedGraph.addNode("Cori");
-        unweightedGraph.addUndirectedEdge("Enno", "Cori");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
+        g.addUndirectedEdge("Enno", "Cori");
 
-        assertEquals(Set.of(Set.of("Enno"), Set.of("Enno", "Cori")), unweightedGraph.findAllCliques("Enno"));
-        assertEquals(Set.of(Set.of("Cori"), Set.of("Enno", "Cori")), unweightedGraph.findAllCliques("Cori"));
+        assertEquals(Set.of(Set.of("Enno"), Set.of("Enno", "Cori")), g.findAllCliques("Enno"));
+        assertEquals(Set.of(Set.of("Cori"), Set.of("Enno", "Cori")), g.findAllCliques("Cori"));
     }
 
     @Test
     void findAllCliques_two_nodes_which_are_not_connected() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
-        unweightedGraph.addNode("Cori");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
 
-        assertEquals(Set.of(Set.of("Enno")), unweightedGraph.findAllCliques("Enno"));
-        assertEquals(Set.of(Set.of("Cori")), unweightedGraph.findAllCliques("Cori"));
+        assertEquals(Set.of(Set.of("Enno")), g.findAllCliques("Enno"));
+        assertEquals(Set.of(Set.of("Cori")), g.findAllCliques("Cori"));
     }
 
     @Test
     void findAllCliques_three_nodes_which_are_connected() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
-        unweightedGraph.addNode("Cori");
-        unweightedGraph.addNode("Max");
-        unweightedGraph.addUndirectedEdge("Enno", "Cori");
-        unweightedGraph.addUndirectedEdge("Enno", "Max");
-        unweightedGraph.addUndirectedEdge("Cori", "Max");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
+        g.addNode("Max");
+        g.addUndirectedEdge("Enno", "Cori");
+        g.addUndirectedEdge("Enno", "Max");
+        g.addUndirectedEdge("Cori", "Max");
 
         assertEquals(
                 Set.of(
@@ -386,7 +386,7 @@ class UnweightedGraphTest {
                         Set.of("Enno", "Max"),
                         Set.of("Enno", "Cori", "Max")
                 ),
-                unweightedGraph.findAllCliques("Enno")
+                g.findAllCliques("Enno")
         );
         assertEquals(
                 Set.of(
@@ -395,7 +395,7 @@ class UnweightedGraphTest {
                         Set.of("Cori", "Max"),
                         Set.of("Cori", "Enno", "Max")
                 ),
-                unweightedGraph.findAllCliques("Cori")
+                g.findAllCliques("Cori")
         );
         assertEquals(
                 Set.of(
@@ -404,48 +404,48 @@ class UnweightedGraphTest {
                         Set.of("Max", "Cori"),
                         Set.of("Max", "Cori", "Enno")
                 ),
-                unweightedGraph.findAllCliques("Max")
+                g.findAllCliques("Max")
         );
     }
 
     @Test
     void findAllCliques_three_nodes_where_only_two_are_connected() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
-        unweightedGraph.addNode("Cori");
-        unweightedGraph.addNode("Max");
-        unweightedGraph.addUndirectedEdge("Enno", "Cori");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
+        g.addNode("Max");
+        g.addUndirectedEdge("Enno", "Cori");
 
         assertEquals(
                 Set.of(
                         Set.of("Enno"),
                         Set.of("Enno", "Cori")
                 ),
-                unweightedGraph.findAllCliques("Enno")
+                g.findAllCliques("Enno")
         );
         assertEquals(
                 Set.of(
                         Set.of("Cori"),
                         Set.of("Cori", "Enno")
                 ),
-                unweightedGraph.findAllCliques("Cori")
+                g.findAllCliques("Cori")
         );
         assertEquals(
                 Set.of(
                         Set.of("Max")
                 ),
-                unweightedGraph.findAllCliques("Max")
+                g.findAllCliques("Max")
         );
     }
 
     @Test
     void findAllCliques_three_nodes_where_one_node_is_connected_to_all_three_but_the_other_two_are_not_directly() {
-        UnweightedGraph<String> unweightedGraph = new UnweightedGraph<>();
-        unweightedGraph.addNode("Enno");
-        unweightedGraph.addNode("Cori");
-        unweightedGraph.addNode("Max");
-        unweightedGraph.addUndirectedEdge("Enno", "Cori");
-        unweightedGraph.addUndirectedEdge("Enno", "Max");
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
+        g.addNode("Max");
+        g.addUndirectedEdge("Enno", "Cori");
+        g.addUndirectedEdge("Enno", "Max");
 
         assertEquals(
                 Set.of(
@@ -453,22 +453,21 @@ class UnweightedGraphTest {
                         Set.of("Enno", "Cori"),
                         Set.of("Enno", "Max")
                 ),
-                unweightedGraph.findAllCliques("Enno")
+                g.findAllCliques("Enno")
         );
         assertEquals(
                 Set.of(
                         Set.of("Cori"),
                         Set.of("Cori", "Enno")
                 ),
-                unweightedGraph.findAllCliques("Cori")
+                g.findAllCliques("Cori")
         );
         assertEquals(
                 Set.of(
                         Set.of("Max"),
                         Set.of("Max", "Enno")
                 ),
-                unweightedGraph.findAllCliques("Max")
+                g.findAllCliques("Max")
         );
     }
-
 }

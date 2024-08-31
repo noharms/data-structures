@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * An abstract graph, where nodes are values of a generic type T (say integer nodes).
+ * An abstract graph: nodes are values of a generic type T (say integer nodes); edges can be directed or undirected
  * <br><br>
  * Since our nodes are pure values (and since there is no order in a graph) we cannot allow duplicate values - we need
  * something to uniquely identify any given node of the graph. If a client would want to have a graph with duplicate
@@ -17,13 +17,33 @@ public abstract class Graph<T> {
      */
     abstract public boolean contains(T value);
 
-    abstract public List<T> shortestPath(T from, T to);
-
-    abstract public Set<T> allNeighbors(T value);
-
     abstract public void addNode(T value);
 
     abstract public int size();
+
+    abstract public Set<T> nodes();
+
+    abstract public Set<T> allNeighbors(T value);
+
+    abstract public Set<T> allUpstreamNeighbors(T value);
+
+    private Map<T, Integer> countUpstreamNeighbors() {
+        return nodes().stream().collect(Collectors.toMap(node -> node, node -> this.allUpstreamNeighbors(node).size()));
+    }
+
+    abstract public Set<Edge<T>> allEdges();
+
+    abstract public List<T> shortestPath(T from, T to);
+
+    public boolean isDirected() {
+        final Set<Edge<T>> allEdges = allEdges();
+        return allEdges.stream().anyMatch(edge -> !allEdges.contains(edge.opposite()));
+    }
+
+    public boolean isUndirected() {
+        final Set<Edge<T>> allEdges = allEdges();
+        return allEdges.stream().allMatch(edge -> allEdges.contains(edge.opposite()));
+    }
 
     void throwIfFound(T value) {
         if (contains(value)) {
@@ -80,8 +100,8 @@ public abstract class Graph<T> {
 
     Set<T> unvisitedNeighbors(T current, Set<T> visited) {
         return allNeighbors(current).stream()
-                                    .filter(neighbor -> !visited.contains(neighbor))
-                                    .collect(Collectors.toSet());
+            .filter(neighbor -> !visited.contains(neighbor))
+            .collect(Collectors.toSet());
     }
 
     static <U> List<U> reconstructPath(U endNode, Map<U, U> nodeToParent) {
@@ -117,4 +137,52 @@ public abstract class Graph<T> {
         }
         return false;
     }
+
+    /**
+     * Uses Kahn's algorithm to return a list of all nodes contained in the graph such that the parent-child relations
+     * of the graph are respected in the order of nodes. That is, if in the graph nodeY is a child of nodeX, nodeY will
+     * appear after nodeX in the returned list. Note that this ordering is non-unique and we just return some order.
+     * <br><br>
+     * O(V + E) in space and time, V number of vertices (=nodes), E number of edges
+     * <br><br>
+     * @throws if the graph is not a directed, acyclic graph
+     */
+    public List<T> topologicalSort() {
+        if (isUndirected()) {
+            throw new IllegalStateException("Topological sort can only be applied on a directed graph.");
+        }
+        final Map<T, Integer> nodeToDependencyCount = countUpstreamNeighbors();
+        final Set<T> sources = nodeToDependencyCount
+            .entrySet()
+            .stream()
+            .filter(e -> e.getValue() == 0)
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
+        // a queue for the nodes without missing dependencies; initially, it contains only sources but as we work off
+        // nodes, other nodes can become dependency-free; if the q is empty but we have not yet visited the whole graph
+        // it means there must be a cyclic dependency in the graph, so we have to stop and throw an error
+        final Queue<T> q = new LinkedList<>(sources);
+        final Set<T> visited = new HashSet<>();
+        final List<T> result = new ArrayList<>();
+        while (!q.isEmpty()) {
+            final T node = q.remove();
+            if (!visited.contains(node)) {
+                visited.add(node);
+                result.add(node);
+                for (T child : allNeighbors(node)) {
+                    final int newDependencyCount = nodeToDependencyCount.get(child) - 1;
+                    nodeToDependencyCount.put(child, newDependencyCount);
+                    if (newDependencyCount == 0) {
+                        q.add(child);
+                    }
+                }
+            }
+        }
+        if (visited.size() == nodes().size()) {
+            return result;
+        } else {
+            throw new IllegalStateException("The graph has cyclic dependencies, topological sort impossible.");
+        }
+    }
+
 }
