@@ -20,7 +20,7 @@ public class SinglyLinkedList<T> {
     private Node<T> head = null;
     private Node<T> tail = null;
 
-    private static class Node<V> {
+    public static class Node<V> {
         private final V value;
         private Node<V> next;
 
@@ -140,5 +140,54 @@ public class SinglyLinkedList<T> {
         Node<T> oldTail = tail;
         tail = head;
         head = oldTail;
+    }
+
+    /**
+     * Zips this list with the given other list such that the returned list is ordered alternatingly with nodes from
+     * this list and from the other list. If one of the two lists is longer than the other, its remaining nodes are
+     * just appended.
+     *
+     * <br><br>
+     * <bf>Caveat:</bf> this method works in place, i.e. the nodes in BOTH this list and the given other list will be
+     * re-wired to point to different other nodes.
+     *
+     * <br><br>
+     * For example,
+     * <pre>
+     * 1 -> 2 -> 3
+     * 4 -> 5 -> 6 -> 7 -> 8
+     * returns
+     * 1 -> 4 -> 2 -> 5 -> 3 -> 6 -> 7 -> 8
+     * </pre>
+     *
+     * <br>
+     *
+     * Or for example,
+     * <pre>
+     * 1 -> 2 -> 3 -> 7 -> 8
+     * 4 -> 5 -> 6
+     * returns
+     * 1 -> 4 -> 2 -> 5 -> 3 -> 6 -> 7 -> 8
+     * </pre>
+     *
+     */
+    public void zipInPlace(SinglyLinkedList<T> other) {
+        if (this.isEmpty()) {
+            this.head = other.head;
+            return;
+        }
+        Node<T> current1 = this.head;
+        Node<T> current2 = other.head;
+        while (current1 != null && current2 != null) {
+            // remember next nodes
+            Node<T> next1 = current1.next;
+            Node<T> next2 = current2.next;
+            // re-wire the links
+            current1.next = current2;
+            current2.next = next1 != null ? next1 : current2.next;
+            // prepare for next round
+            current1 = next1;
+            current2 = next2;
+        }
     }
 }

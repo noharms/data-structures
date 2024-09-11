@@ -163,4 +163,100 @@ class SinglyLinkedListTest {
         assertEquals(List.of(1, 2, 3), list.getAll());
     }
 
+    @Test
+    void zip_empty_list_with_non_empty_other_list_effectively_makes_both_lists_identical() {
+        SinglyLinkedList<Integer> l1 = new SinglyLinkedList<>();
+        SinglyLinkedList<Integer> l2 = new SinglyLinkedList<>();
+        l2.addLast(1);
+        l2.addLast(2);
+        l2.addLast(3);
+
+        l1.zipInPlace(l2);
+
+        assertEquals(List.of(1, 2, 3), l1.getAll());
+        assertEquals(List.of(1, 2, 3), l2.getAll());
+    }
+
+    @Test
+    void zip_non_empty_list_with_empty_other_list_does_change_any_of_the_two_lists() {
+        SinglyLinkedList<Integer> l1 = new SinglyLinkedList<>();
+        l1.addLast(1);
+        l1.addLast(2);
+        l1.addLast(3);
+        SinglyLinkedList<Integer> l2 = new SinglyLinkedList<>();
+
+        l1.zipInPlace(l2);
+
+        assertEquals(List.of(1, 2, 3), l1.getAll());
+        assertEquals(List.of(), l2.getAll());
+    }
+
+    @Test
+    void zip_two_lists_both_size_1() {
+        SinglyLinkedList<Integer> l1 = new SinglyLinkedList<>();
+        l1.addLast(42);
+        SinglyLinkedList<Integer> l2 = new SinglyLinkedList<>();
+        l2.addLast(43);
+
+        l1.zipInPlace(l2);
+
+        assertEquals(List.of(42, 43), l1.getAll());
+        assertEquals(List.of(43), l2.getAll());
+    }
+
+    @Test
+    void zip_two_lists_both_size_3() {
+        SinglyLinkedList<Integer> l1 = new SinglyLinkedList<>();
+        l1.addLast(1);
+        l1.addLast(2);
+        l1.addLast(3);
+        SinglyLinkedList<Integer> l2 = new SinglyLinkedList<>();
+        l2.addLast(4);
+        l2.addLast(5);
+        l2.addLast(6);
+
+        l1.zipInPlace(l2);
+
+        assertEquals(List.of(1, 4, 2, 5, 3, 6), l1.getAll());
+        assertEquals(List.of(4, 2, 5, 3, 6), l2.getAll());
+    }
+
+    @Test
+    void zip_two_lists_where_this_list_is_longer() {
+        SinglyLinkedList<Integer> l1 = new SinglyLinkedList<>();
+        l1.addLast(1);
+        l1.addLast(2);
+        l1.addLast(3);
+        l1.addLast(7);
+        l1.addLast(8);
+        SinglyLinkedList<Integer> l2 = new SinglyLinkedList<>();
+        l2.addLast(4);
+        l2.addLast(5);
+        l2.addLast(6);
+
+        l1.zipInPlace(l2);
+
+        assertEquals(List.of(1, 4, 2, 5, 3, 6, 7, 8), l1.getAll());
+        assertEquals(List.of(4, 2, 5, 3, 6, 7, 8), l2.getAll());
+    }
+
+    @Test
+    void zip_two_lists_where_the_other_list_is_longer() {
+        SinglyLinkedList<Integer> l1 = new SinglyLinkedList<>();
+        l1.addLast(1);
+        l1.addLast(2);
+        l1.addLast(3);
+        SinglyLinkedList<Integer> l2 = new SinglyLinkedList<>();
+        l2.addLast(4);
+        l2.addLast(5);
+        l2.addLast(6);
+        l2.addLast(7);
+        l2.addLast(8);
+
+        l1.zipInPlace(l2);
+
+        assertEquals(List.of(1, 4, 2, 5, 3, 6, 7, 8), l1.getAll());
+        assertEquals(List.of(4, 2, 5, 3, 6, 7, 8), l2.getAll());
+    }
+
 }
