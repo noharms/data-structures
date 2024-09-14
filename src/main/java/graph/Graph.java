@@ -3,12 +3,16 @@ package graph;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptySet;
+
 /**
  * An abstract graph: nodes are values of a generic type T (say integer nodes); edges can be directed or undirected
  * <br><br>
  * Since our nodes are pure values (and since there is no order in a graph) we cannot allow duplicate values - we need
  * something to uniquely identify any given node of the graph. If a client would want to have a graph with duplicate
  * values, that would still be possible because they could wrap each value and decorate them with some other identifier.
+ * <br><br>
+ * Caveat: T must implement {@link Object#hashCode()} and {@link Object#equals(Object)} for this class to work correctly
  */
 public abstract class Graph<T> {
 
@@ -116,22 +120,40 @@ public abstract class Graph<T> {
         return path;
     }
 
+    public static <V> Set<V> dfsTraversal(V startNode, Graph<V> g) {
+        if (!g.contains(startNode)) {
+            return emptySet();
+        }
+        final Set<V> result = new HashSet<>();
+        dfsRecurse(startNode, g, result);
+        return result;
+    }
+
+    private static <V> void dfsRecurse(V node, Graph<V> g, Set<V> result) {
+        result.add(node);
+        for (V neighbor : g.allNeighbors(node)) {
+            if (!result.contains(neighbor)) {
+                dfsRecurse(neighbor, g, result);
+            }
+        }
+    }
+
     /**
      * Checks by a depth-first-search if two nodes {@code from} and {@code to} are connected.
      */
     public boolean dfsIsConnected(T from, T to) {
         throwIfNotFound(from);
         throwIfNotFound(to);
-        return dfsRecursive(from, to, new HashSet<>());
+        return dfsUntilEqualNodes(from, to, new HashSet<>());
     }
 
-    private boolean dfsRecursive(T candidate, T target, HashSet<T> visited) {
+    private boolean dfsUntilEqualNodes(T candidate, T target, HashSet<T> visited) {
         if (candidate.equals(target)) {
             return true;
         }
         visited.add(candidate);
         for (T neighbor : unvisitedNeighbors(candidate, visited)) {
-            if (dfsRecursive(neighbor, target, visited)) {
+            if (dfsUntilEqualNodes(neighbor, target, visited)) {
                 return true;
             }
         }
@@ -185,4 +207,66 @@ public abstract class Graph<T> {
         }
     }
 
+    /**
+     * A component of a graph is a maximal subset of nodes and edges in which there is a path from any single node to
+     * any other node, i.e. all nodes are pairwise connected. Maximal means that the component is defined to contain all
+     * connected nodes (one cannot leave out a connected node for a set of nodes to be called a component).
+     * <br><br>
+     * In undirected graphs the algorithm is simple: traverse all nodes of the graph and start a DFS from each node to
+     * find the component of the node; keep track of all visited nodes to not traverse the same component twice; this
+     * is O(n) in time and space.
+     */
+    public Set<Set<T>> weaklyConnectedComponents() {
+        if (isDirected()) {
+            throw new IllegalStateException("Turn your graph to the equivalent undirected graph to use this API.");
+        }
+        final Set<Set<T>> components = new HashSet<>();
+        final Set<T> visited = new HashSet<>();
+        for (T node : nodes()) {
+            if (!visited.contains(node)) {
+                final Set<T> newComponent = dfsTraversal(node, this);
+                components.add(newComponent);
+                visited.addAll(newComponent);
+            }
+        }
+        return components;
+    }
+
+    /**
+     * A component of a graph is a maximal subset of nodes and edges in which there is a path from any single node to
+     * any other node, i.e. all nodes are pairwise connected. Maximal means that the component is defined to contain all
+     * connected nodes (one cannot leave out a connected node for a set of nodes to be called a component).
+     * <br><br>
+     * While the term is intuitive for undirected graphs, for directed graphs, there is a distinction between weakly
+     * connected and strongly connected components: weakly means to define components as if the edges were undirected;
+     * strongly means to actually respect the direction of the edges (note that this means a source node with only
+     * outgoing directions is ALWAYS its own component because no path leads back to it).
+     */
+    public Set<Set<T>> stronglyConnectedComponents() {
+        if (isUndirected()) {
+            // for undirected graphs, strongly connected is equivalent to weakly connected
+            throw new IllegalStateException("Strongly connected components are only defined for directed graphs.");
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        // this works, assuming T implements hashcode
+        return Objects.hash(nodes(), allEdges());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        // this works, assuming T implements equals
+        return other instanceof Graph<?> otherGraph
+            && this.nodes().equals(otherGraph.nodes())
+            && this.allEdges().equals(otherGraph.allEdges());
+    }
+
+    @Override
+    public String toString() {
+        return "Graph(" + nodes().stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
+    }
 }

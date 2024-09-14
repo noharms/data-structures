@@ -95,25 +95,6 @@ public class UnweightedGraph<T> extends Graph<T> {
     }
 
     /**
-     * Returns a set of all components of the graph, where a component is a set of nodes that are connected to each
-     * other but to no other node in the graph.
-     */
-    public Set<Set<T>> findComponents() {
-        Set<Set<T>> components = new HashSet<>();
-        Set<T> visited = new HashSet<>();
-        for (T node : nodesToEdges.keySet()) {
-            if (!visited.contains(node)) {
-                Set<T> component = new HashSet<>();
-                component.add(node);
-                component.addAll(findAllConnected(node));
-                components.add(component);
-                visited.addAll(component);
-            }
-        }
-        return components;
-    }
-
-    /**
      * Returns the component that the given node belongs to.
      */
     public Set<T> findAllConnected(T node) {
@@ -148,7 +129,7 @@ public class UnweightedGraph<T> extends Graph<T> {
      * once this queue is empty, we stop.
      * <br><br>
      * Caveat: for graphs in which all nodes are mutual neighbors, finding all sub-cliques is equivalent to finding all
-     * subsets (because each subset is a click, except that we do not have the empty set here); this means we will have
+     * subsets (because each subset is a clique, except that we do not have the empty set here); this means we will have
      * O(2^n) cliques to create.
      */
     public Set<Set<T>> findAllCliques(T node) {

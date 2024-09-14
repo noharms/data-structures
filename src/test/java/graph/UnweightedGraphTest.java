@@ -208,65 +208,6 @@ class UnweightedGraphTest {
     }
 
     @Test
-    void findComponents_on_empty_graph_gives_empty_set() {
-        assertEquals(emptySet(), new UnweightedGraph<>().findComponents());
-    }
-
-    @Test
-    void findComponents_one_node_in_graph_gives_just_one_component() {
-        UnweightedGraph<String> g = new UnweightedGraph<>();
-        g.addNode("Enno");
-
-        assertEquals(Set.of(Set.of("Enno")), g.findComponents());
-    }
-
-    @Test
-    void findComponents_two_unconnected_nodes_in_graph_gives_two_components_with_each_one_element() {
-        UnweightedGraph<String> g = new UnweightedGraph<>();
-        g.addNode("Enno");
-        g.addNode("Cori");
-
-        assertEquals(Set.of(Set.of("Enno"), Set.of("Cori")), g.findComponents());
-    }
-
-    @Test
-    void findComponents_two_connected_nodes_in_graph_gives_one_component_with_two_elements() {
-        UnweightedGraph<String> g = new UnweightedGraph<>();
-        g.addNode("Enno");
-        g.addNode("Cori");
-        g.addUndirectedEdge("Enno", "Cori");
-
-        assertEquals(Set.of(Set.of("Enno", "Cori")), g.findComponents());
-    }
-
-    @Test
-    void findComponents_two_components_with_each_two_elements() {
-        UnweightedGraph<String> g = new UnweightedGraph<>();
-        g.addNode("Enno");
-        g.addNode("Cori");
-        g.addUndirectedEdge("Enno", "Cori");
-        g.addNode("Moritz");
-        g.addNode("Niclas");
-        g.addUndirectedEdge("Moritz", "Niclas");
-
-        assertEquals(Set.of(Set.of("Enno", "Cori"), Set.of("Moritz", "Niclas")), g.findComponents());
-    }
-
-    @Test
-    void findComponents_one_chain_of_nodes_gives_one_big_component() {
-        UnweightedGraph<String> g = new UnweightedGraph<>();
-        g.addNode("Enno");
-        g.addNode("Cori");
-        g.addNode("Moritz");
-        g.addNode("Niclas");
-        g.addUndirectedEdge("Enno", "Cori");
-        g.addUndirectedEdge("Cori", "Moritz");
-        g.addUndirectedEdge("Moritz", "Niclas");
-
-        assertEquals(Set.of(Set.of("Enno", "Cori", "Moritz", "Niclas")), g.findComponents());
-    }
-
-    @Test
     void findAllConnected_node_not_contained() {
         assertEquals(emptySet(), new UnweightedGraph<>().findAllConnected("Enno"));
     }
