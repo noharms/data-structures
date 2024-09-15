@@ -42,7 +42,7 @@ public class MaximumFlow {
     }
 
     public int computeMaxFlow(int sourceId, int sinkId) {
-        WeightedGraph<Integer> residualGraph = graph.copy();
+        WeightedGraph<Integer> residualGraph = (WeightedGraph<Integer>) graph.copy();
         int maxFlow = 0;
         List<Integer> pathSourceToSink = residualGraph.bfsPath(sourceId, sinkId);
         while (!pathSourceToSink.isEmpty()) {

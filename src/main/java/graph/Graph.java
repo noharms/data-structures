@@ -23,6 +23,12 @@ public abstract class Graph<T> {
 
     abstract public void addNode(T value);
 
+    public void addNodes(Collection<T> values) {
+        for (T node : values) {
+            addNode(node);
+        }
+    }
+
     abstract public int size();
 
     abstract public Set<T> nodes();
@@ -35,17 +41,48 @@ public abstract class Graph<T> {
         return nodes().stream().collect(Collectors.toMap(node -> node, node -> this.allUpstreamNeighbors(node).size()));
     }
 
-    abstract public Set<Edge<T>> allEdges();
+    abstract public void addDirectedEdge(Edge<T> edge);
+
+    public void addDirectedEdges(Collection<Edge<T>> edges) {
+        for (Edge<T> e : edges) {
+            addDirectedEdge(e);
+        }
+    }
+
+    public void addUndirectedEdge(Edge<T> edge) {
+        addDirectedEdge(edge);
+        addDirectedEdge(edge.opposite());
+    }
+
+    // adding an undirected is just a convenience to avoid two calls of addDirectedEdge
+    public void addUndirectedEdges(Collection<Edge<T>> edges) {
+        for (Edge<T> e : edges) {
+            addUndirectedEdge(e);
+        }
+    }
+
+    /**
+     * Note: we represent undirected edges as two opposing edges and, if existing, both will be returned here
+     */
+    abstract public Set<Edge<T>> edges();
 
     abstract public List<T> shortestPath(T from, T to);
 
+    abstract public Graph<T> copyWithoutEdges();
+
+    public Graph<T> copy() {
+        final Graph<T> copy = copyWithoutEdges();
+        copy.addDirectedEdges(edges());
+        return copy;
+    }
+
     public boolean isDirected() {
-        final Set<Edge<T>> allEdges = allEdges();
+        final Set<Edge<T>> allEdges = edges();
         return allEdges.stream().anyMatch(edge -> !allEdges.contains(edge.opposite()));
     }
 
     public boolean isUndirected() {
-        final Set<Edge<T>> allEdges = allEdges();
+        final Set<Edge<T>> allEdges = edges();
         return allEdges.stream().allMatch(edge -> allEdges.contains(edge.opposite()));
     }
 
@@ -60,6 +97,13 @@ public abstract class Graph<T> {
         if (!contains(value)) {
             throw new IllegalArgumentException("Node %s is not found in graph".formatted(value));
         }
+    }
+
+    public Graph<T> transpose() {
+        final Graph<T> transposed = copyWithoutEdges();
+        final List<Edge<T>> oppositeEdges = edges().stream().map(Edge::opposite).toList();
+        transposed.addDirectedEdges(oppositeEdges);
+        return transposed;
     }
 
     /**
@@ -241,6 +285,8 @@ public abstract class Graph<T> {
      * connected and strongly connected components: weakly means to define components as if the edges were undirected;
      * strongly means to actually respect the direction of the edges (note that this means a source node with only
      * outgoing directions is ALWAYS its own component because no path leads back to it).
+     * <br><br>
+     *
      */
     public Set<Set<T>> stronglyConnectedComponents() {
         if (isUndirected()) {
@@ -254,7 +300,7 @@ public abstract class Graph<T> {
     @Override
     public int hashCode() {
         // this works, assuming T implements hashcode
-        return Objects.hash(nodes(), allEdges());
+        return Objects.hash(nodes(), edges());
     }
 
     @Override
@@ -262,7 +308,7 @@ public abstract class Graph<T> {
         // this works, assuming T implements equals
         return other instanceof Graph<?> otherGraph
             && this.nodes().equals(otherGraph.nodes())
-            && this.allEdges().equals(otherGraph.allEdges());
+            && this.edges().equals(otherGraph.edges());
     }
 
     @Override

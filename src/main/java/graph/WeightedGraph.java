@@ -63,8 +63,8 @@ public class WeightedGraph<T> extends Graph<T> {
         throwIfNotFound(from);
         throwIfNotFound(to);
         throwIfNegative(weight);
-        nodesToEdges.get(from).put(to, weight);
-        nodesToEdges.get(to).put(from, weight);
+        addDirectedEdge(from, to, weight);
+        addDirectedEdge(to, from, weight);
     }
 
     private void throwIfNegative(int weight) {
@@ -89,11 +89,17 @@ public class WeightedGraph<T> extends Graph<T> {
             .collect(Collectors.toSet());
     }
 
-    public Set<T> allNodes() {
-        return nodesToEdges.keySet();
+    @Override
+    public void addDirectedEdge(Edge<T> edge) {
+        if (edge instanceof Edge.WeightedEdge<T> e) {
+            addDirectedEdge(e.from(), e.to(), e.weight());
+        } else {
+            throw new IllegalArgumentException("Can only add weighted edges to weighted graph.");
+        }
     }
 
-    public Set<Edge<T>> allEdges() {
+    @Override
+    public Set<Edge<T>> edges() {
         return nodesToEdges.entrySet()
             .stream()
             .flatMap(nodeToNeighborsWithWeights -> nodeToNeighborsWithWeights
@@ -123,24 +129,11 @@ public class WeightedGraph<T> extends Graph<T> {
     }
 
     public Set<Integer> allWeights() {
-        return allNodes().stream()
+        return nodes().stream()
             .map(this::allEdges)
             .map(Map::values)
             .flatMap(Collection::stream)
             .collect(Collectors.toSet());
-    }
-
-    public WeightedGraph<T> copy() {
-        WeightedGraph<T> copy = new WeightedGraph<>();
-        for (T node : allNodes()) {
-            copy.addNode(node);
-        }
-        for (T node : allNodes()) {
-            for (var edge : allEdges(node).entrySet()) {
-                copy.addDirectedEdge(node, edge.getKey(), edge.getValue());
-            }
-        }
-        return copy;
     }
 
     @Override
@@ -148,6 +141,13 @@ public class WeightedGraph<T> extends Graph<T> {
         throwIfNotFound(from);
         throwIfNotFound(to);
         return dijkstra(from, to);
+    }
+
+    @Override
+    public WeightedGraph<T> copyWithoutEdges() {
+        final WeightedGraph<T> copy = new WeightedGraph<>();
+        copy.addNodes(nodes());
+        return copy;
     }
 
     /**

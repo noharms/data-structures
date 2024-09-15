@@ -30,7 +30,7 @@ class AdjacencyConverterTest {
 
         WeightedGraph<Integer> graph = new AdjacencyConverter(adjacency).connectAll();
 
-        assertEquals(Set.of(0), graph.allNodes());
+        assertEquals(Set.of(0), graph.nodes());
     }
 
     @Test
@@ -39,7 +39,7 @@ class AdjacencyConverterTest {
 
         WeightedGraph<Integer> graph = new AdjacencyConverter(adjacency).connectAll();
 
-        assertTrue(graph.allNodes().isEmpty());
+        assertTrue(graph.nodes().isEmpty());
     }
 
     @Test
@@ -48,7 +48,7 @@ class AdjacencyConverterTest {
 
         WeightedGraph<Integer> graph = new AdjacencyConverter(adjacency).connectAll();
 
-        assertEquals(Set.of(0, 1), graph.allNodes());
+        assertEquals(Set.of(0, 1), graph.nodes());
     }
 
     @Test
@@ -57,7 +57,7 @@ class AdjacencyConverterTest {
 
         WeightedGraph<Integer> graph = new AdjacencyConverter(adjacency).connectAll();
 
-        assertEquals(Set.of(0, 1, 2), graph.allNodes());
+        assertEquals(Set.of(0, 1, 2), graph.nodes());
     }
 
     @Test

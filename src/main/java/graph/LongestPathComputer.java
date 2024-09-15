@@ -18,7 +18,7 @@ public class LongestPathComputer<T> {
 
     public LongestPathComputer(WeightedGraph<T> originalGraph) {
         this.originalGraph = originalGraph;
-        if (originalGraph.allNodes().stream().allMatch(node -> originalGraph.allEdges(node).isEmpty())) {
+        if (originalGraph.nodes().stream().allMatch(node -> originalGraph.allEdges(node).isEmpty())) {
             throw new IllegalArgumentException("For this algorithm to work we need edges in the graph.");
         }
         this.invertedGraph = invert(originalGraph);
@@ -34,10 +34,10 @@ public class LongestPathComputer<T> {
     private WeightedGraph<T> invert(WeightedGraph<T> originalGraph) {
         int maxWeight = maxWeight(originalGraph);
         WeightedGraph<T> newGraph = new WeightedGraph<>();
-        for (T node : originalGraph.allNodes()) {
+        for (T node : originalGraph.nodes()) {
             newGraph.addNode(node);
         }
-        for (T node : originalGraph.allNodes()) {
+        for (T node : originalGraph.nodes()) {
             for (var edge : originalGraph.allEdges(node).entrySet()) {
                 T to = edge.getKey();
                 int weight = edge.getValue();

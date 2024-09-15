@@ -17,27 +17,27 @@ import static java.util.Collections.emptySet;
  */
 public class UnweightedGraph<T> extends Graph<T> {
 
-    private final Map<T, Set<T>> nodesToEdges = new HashMap<>();
+    private final Map<T, Set<T>> nodeToNeighbors = new HashMap<>();
 
     @Override
     public int size() {
-        return nodesToEdges.keySet().size();
+        return nodeToNeighbors.keySet().size();
     }
 
     @Override
     public Set<T> nodes() {
-        return nodesToEdges.keySet();
+        return nodeToNeighbors.keySet();
     }
 
     @Override
     public boolean contains(T value) {
-        return nodesToEdges.containsKey(value);
+        return nodeToNeighbors.containsKey(value);
     }
 
     @Override
     public void addNode(T value) {
         throwIfFound(value);
-        nodesToEdges.put(value, new HashSet<>());
+        nodeToNeighbors.put(value, new HashSet<>());
     }
 
     /**
@@ -46,7 +46,7 @@ public class UnweightedGraph<T> extends Graph<T> {
     public void addDirectedEdge(T from, T to) {
         throwIfNotFound(from);
         throwIfNotFound(to);
-        nodesToEdges.get(from).add(to);
+        nodeToNeighbors.get(from).add(to);
     }
 
     /**
@@ -55,12 +55,12 @@ public class UnweightedGraph<T> extends Graph<T> {
     public void addUndirectedEdge(T from, T to) {
         throwIfNotFound(from);
         throwIfNotFound(to);
-        nodesToEdges.get(from).add(to);
-        nodesToEdges.get(to).add(from);
+        addDirectedEdge(from, to);
+        addDirectedEdge(to, from);
     }
 
-    public Set<Edge<T>> allEdges() {
-        return nodesToEdges.entrySet()
+    public Set<Edge<T>> edges() {
+        return nodeToNeighbors.entrySet()
             .stream()
             .flatMap(
                 nodeToNeighbors -> nodeToNeighbors
@@ -74,12 +74,12 @@ public class UnweightedGraph<T> extends Graph<T> {
     @Override
     public Set<T> allNeighbors(T value) {
         throwIfNotFound(value);
-        return nodesToEdges.get(value);
+        return nodeToNeighbors.get(value);
     }
 
     @Override
     public Set<T> allUpstreamNeighbors(T value) {
-        return nodesToEdges
+        return nodeToNeighbors
             .entrySet()
             .stream()
             .filter(e -> e.getValue().contains(value))
@@ -88,10 +88,26 @@ public class UnweightedGraph<T> extends Graph<T> {
     }
 
     @Override
+    public void addDirectedEdge(Edge<T> edge) {
+        if (edge instanceof Edge.UnweightedEdge<T> e) {
+            addDirectedEdge(e.from(), e.to());
+        } else {
+            throw new IllegalArgumentException("Can only add unweighted edges to unweighted graph.");
+        }
+    }
+
+    @Override
     public List<T> shortestPath(T from, T to) {
         throwIfNotFound(from);
         throwIfNotFound(to);
         return bfsPath(from, to);
+    }
+
+    @Override
+    public UnweightedGraph<T> copyWithoutEdges() {
+        final UnweightedGraph<T> copy = new UnweightedGraph<>();
+        copy.addNodes(nodes());
+        return copy;
     }
 
     /**
@@ -108,7 +124,7 @@ public class UnweightedGraph<T> extends Graph<T> {
     }
 
     private void findAllConnected(T node, Set<T> visited, Set<T> result) {
-        for (T neighbor : nodesToEdges.get(node)) {
+        for (T neighbor : nodeToNeighbors.get(node)) {
             if (!visited.contains(neighbor)) {
                 result.add(neighbor);
                 visited.add(neighbor);
