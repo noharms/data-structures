@@ -74,7 +74,7 @@ public class WeightedGraph<T> extends Graph<T> {
     }
 
     @Override
-    public Set<T> allNeighbors(T value) {
+    public Set<T> neighbors(T value) {
         throwIfNotFound(value);
         return nodesToEdges.get(value).keySet();
     }

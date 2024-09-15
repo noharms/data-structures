@@ -24,7 +24,7 @@ class RectangularMazeTest {
         assertFalse(graph.contains(new Cell(0, 1)));
         assertFalse(graph.contains(new Cell(1, 1)));
 
-        assertEquals(emptySet(), graph.allNeighbors(new Cell(0, 0)));
+        assertEquals(emptySet(), graph.neighbors(new Cell(0, 0)));
     }
 
     @Test
@@ -44,16 +44,16 @@ class RectangularMazeTest {
 
         assertEquals(Set.of(new Cell(0, 1),
                             new Cell(1, 0)),
-                     graph.allNeighbors(new Cell(0, 0)));
+                     graph.neighbors(new Cell(0, 0)));
         assertEquals(Set.of(new Cell(0, 0),
                             new Cell(1, 1)),
-                     graph.allNeighbors(new Cell(0, 1)));
+                     graph.neighbors(new Cell(0, 1)));
         assertEquals(Set.of(new Cell(0, 0),
                             new Cell(1, 1)),
-                     graph.allNeighbors(new Cell(1, 0)));
+                     graph.neighbors(new Cell(1, 0)));
         assertEquals(Set.of(new Cell(0, 1),
                             new Cell(1, 0)),
-                     graph.allNeighbors(new Cell(1, 1)));
+                     graph.neighbors(new Cell(1, 1)));
 
         assertEquals(3, graph.shortestPath(new Cell(0, 0), new Cell(1, 1)).size());
         assertEquals(1, graph.shortestPath(new Cell(0, 0), new Cell(0, 0)).size());
@@ -76,10 +76,10 @@ class RectangularMazeTest {
         assertTrue(graph.contains(new Cell(0, 1)));
         assertTrue(graph.contains(new Cell(1, 1)));
 
-        assertEquals(emptySet(), graph.allNeighbors(new Cell(0, 0)));
-        assertEquals(emptySet(), graph.allNeighbors(new Cell(0, 1)));
-        assertEquals(emptySet(), graph.allNeighbors(new Cell(1, 0)));
-        assertEquals(emptySet(), graph.allNeighbors(new Cell(1, 1)));
+        assertEquals(emptySet(), graph.neighbors(new Cell(0, 0)));
+        assertEquals(emptySet(), graph.neighbors(new Cell(0, 1)));
+        assertEquals(emptySet(), graph.neighbors(new Cell(1, 0)));
+        assertEquals(emptySet(), graph.neighbors(new Cell(1, 1)));
 
         assertEquals(0, graph.shortestPath(new Cell(0, 0), new Cell(1, 1)).size());
         assertEquals(1, graph.shortestPath(new Cell(0, 0), new Cell(0, 0)).size());
@@ -115,20 +115,20 @@ class RectangularMazeTest {
 
         assertEquals(Set.of(new Cell(0, 1),
                             new Cell(1, 0)),
-                     graph.allNeighbors(new Cell(0, 0)));
+                     graph.neighbors(new Cell(0, 0)));
         assertEquals(Set.of(new Cell(0, 0),
                             new Cell(1, 1),
                             new Cell(0, 2)),
-                     graph.allNeighbors(new Cell(0, 1)));
+                     graph.neighbors(new Cell(0, 1)));
         assertEquals(Set.of(new Cell(0, 0),
                             new Cell(1, 1),
                             new Cell(2, 0)),
-                     graph.allNeighbors(new Cell(1, 0)));
+                     graph.neighbors(new Cell(1, 0)));
         assertEquals(Set.of(new Cell(0, 1),
                             new Cell(1, 0),
                             new Cell(1, 2),
                             new Cell(2, 1)),
-                     graph.allNeighbors(new Cell(1, 1)));
+                     graph.neighbors(new Cell(1, 1)));
 
         assertEquals(5, graph.shortestPath(new Cell(0, 0), new Cell(2, 2)).size());
         assertEquals(4, graph.shortestPath(new Cell(0, 0), new Cell(2, 1)).size());
@@ -146,13 +146,13 @@ class RectangularMazeTest {
 
         assertEquals(9, graph.size());
 
-        assertEquals(Set.of(new Cell(1, 0)), graph.allNeighbors(new Cell(0, 0)));
-        assertEquals(emptySet(), graph.allNeighbors(new Cell(0, 1)));
+        assertEquals(Set.of(new Cell(1, 0)), graph.neighbors(new Cell(0, 0)));
+        assertEquals(emptySet(), graph.neighbors(new Cell(0, 1)));
         assertEquals(Set.of(new Cell(0, 0),
                             new Cell(2, 0)),
-                     graph.allNeighbors(new Cell(1, 0)));
+                     graph.neighbors(new Cell(1, 0)));
         assertEquals(emptySet(),
-                     graph.allNeighbors(new Cell(1, 1)));
+                     graph.neighbors(new Cell(1, 1)));
 
         assertEquals(7, graph.shortestPath(new Cell(0, 0), new Cell(0, 2)).size());
     }

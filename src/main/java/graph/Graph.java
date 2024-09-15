@@ -33,7 +33,7 @@ public abstract class Graph<T> {
 
     abstract public Set<T> nodes();
 
-    abstract public Set<T> allNeighbors(T value);
+    abstract public Set<T> neighbors(T value);
 
     abstract public Set<T> allUpstreamNeighbors(T value);
 
@@ -124,7 +124,7 @@ public abstract class Graph<T> {
         T current = null;
         while (!searchQueue.isEmpty() && !to.equals(current)) {
             current = searchQueue.remove();
-            for (T neighbor : allNeighbors(current)) {
+            for (T neighbor : neighbors(current)) {
                 // need to check that the neighbor was not yet added to the search queue
                 // imagine e.g. a graph of cells for a 3x3 matrix
                 // 000
@@ -147,7 +147,7 @@ public abstract class Graph<T> {
     }
 
     Set<T> unvisitedNeighbors(T current, Set<T> visited) {
-        return allNeighbors(current).stream()
+        return neighbors(current).stream()
             .filter(neighbor -> !visited.contains(neighbor))
             .collect(Collectors.toSet());
     }
@@ -175,7 +175,7 @@ public abstract class Graph<T> {
 
     private static <V> void dfsRecurse(V node, Graph<V> g, Set<V> result) {
         result.add(node);
-        for (V neighbor : g.allNeighbors(node)) {
+        for (V neighbor : g.neighbors(node)) {
             if (!result.contains(neighbor)) {
                 dfsRecurse(neighbor, g, result);
             }
@@ -235,7 +235,7 @@ public abstract class Graph<T> {
             if (!visited.contains(node)) {
                 visited.add(node);
                 result.add(node);
-                for (T child : allNeighbors(node)) {
+                for (T child : neighbors(node)) {
                     final int newDependencyCount = nodeToDependencyCount.get(child) - 1;
                     nodeToDependencyCount.put(child, newDependencyCount);
                     if (newDependencyCount == 0) {

@@ -72,7 +72,7 @@ public class UnweightedGraph<T> extends Graph<T> {
     }
 
     @Override
-    public Set<T> allNeighbors(T value) {
+    public Set<T> neighbors(T value) {
         throwIfNotFound(value);
         return nodeToNeighbors.get(value);
     }
@@ -172,7 +172,7 @@ public class UnweightedGraph<T> extends Graph<T> {
 
     private Set<T> findDisintegratedCommonNeighbors(Set<T> clique) {
         Set<Set<T>> memberNeighborhoods = clique.stream()
-            .map(this::allNeighbors)
+            .map(this::neighbors)
             .map(neighborhood -> excise(neighborhood, clique))
             .collect(Collectors.toSet());
         Set<T> smallestMemberNeighborhood = memberNeighborhoods.stream()
