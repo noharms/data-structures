@@ -169,17 +169,18 @@ public abstract class Graph<T> {
             return emptySet();
         }
         final Set<V> result = new HashSet<>();
-        dfsRecurse(startNode, g, result);
+        dfsRecurse(startNode, g, new HashSet<>(), result);
         return result;
     }
 
-    private static <V> void dfsRecurse(V node, Graph<V> g, Set<V> visited) {
+    public static <V> void dfsRecurse(V node, Graph<V> g, Set<V> visited, Set<V> result) {
         if (visited.contains(node)) {
             return;
         }
         visited.add(node);
+        result.add(node);
         for (V neighbor : g.neighbors(node)) {
-            dfsRecurse(neighbor, g, visited);
+            dfsRecurse(neighbor, g, visited, result);
         }
     }
 
@@ -248,7 +249,7 @@ public abstract class Graph<T> {
         if (visited.size() == nodes().size()) {
             return result;
         } else {
-            throw new IllegalStateException("The graph has cyclic dependencies, topological sort impossible.");
+            throw new IllegalStateException("The graph has cyclic dependencies, topological sort impossible. First find SCCs, then condense SCCs to supernodes, then use this API.");
         }
     }
 
@@ -283,19 +284,49 @@ public abstract class Graph<T> {
      * connected nodes (one cannot leave out a connected node for a set of nodes to be called a component).
      * <br><br>
      * While the term is intuitive for undirected graphs, for directed graphs, there is a distinction between weakly
-     * connected and strongly connected components: weakly means to define components as if the edges were undirected;
-     * strongly means to actually respect the direction of the edges (note that this means a source node with only
-     * outgoing directions is ALWAYS its own component because no path leads back to it).
-     * <br><br>
-     *
+     * connected (WCC) and strongly connected components (SCC): weakly means to define components as if the edges were
+     * undirected; strongly means to actually respect the direction of the edges (note that this means a source node
+     * with only outgoing directions is ALWAYS its own component because no path leads back to it).
      */
     public Set<Set<T>> stronglyConnectedComponents() {
-        if (isUndirected()) {
-            // for undirected graphs, strongly connected is equivalent to weakly connected
-            throw new IllegalStateException("Strongly connected components are only defined for directed graphs.");
-        } else {
-            return null;
+        final Set<Set<T>> result = new HashSet<>();
+
+        final Set<T> alreadyInComponents = new HashSet<>();
+        final List<T> byDFSFinishingTime = sortByDFSFinishingTime();
+        final Graph<T> transposed = transpose();
+
+        while (!byDFSFinishingTime.isEmpty()) {
+            final T node = byDFSFinishingTime.removeLast();
+            if (!alreadyInComponents.contains(node)) {
+                final Set<T> newComponent = new HashSet<>();
+                dfsRecurse(node, transposed, alreadyInComponents, newComponent);
+                result.add(newComponent);
+            }
         }
+        return result;
+    }
+
+    /**
+     * The nodes which finish first will be at the start of the returned list
+     */
+    private List<T> sortByDFSFinishingTime() {
+        final List<T> sorted = new LinkedList<>();
+        final HashSet<T> visited = new HashSet<>();
+        for (T node : nodes()) {
+            dfsStoreByFinishTime(node, visited, sorted);
+        }
+        return sorted;
+    }
+
+    private void dfsStoreByFinishTime(T node, Set<T> visited, List<T> result) {
+        if (visited.contains(node)) {
+            return;
+        }
+        visited.add(node);
+        for (T neighbor : neighbors(node)) {
+            dfsStoreByFinishTime(neighbor, visited, result);
+        }
+        result.addLast(node);
     }
 
     @Override

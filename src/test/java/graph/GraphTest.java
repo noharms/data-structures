@@ -158,7 +158,7 @@ class GraphTest {
     }
 
     @Test
-    void findComponents_one_chain_of_nodes_gives_one_big_component() {
+    void weakly_connected_components_of_one_chain_of_nodes_gives_one_big_component() {
         UnweightedGraph<String> g = new UnweightedGraph<>();
         g.addNode("Enno");
         g.addNode("Cori");
@@ -169,6 +169,186 @@ class GraphTest {
         g.addUndirectedEdge("Moritz", "Niclas");
 
         assertEquals(Set.of(Set.of("Enno", "Cori", "Moritz", "Niclas")), g.weaklyConnectedComponents());
+    }
+
+    @Test
+    void strongly_connected_components_empty_graph() {
+        assertEquals(emptySet(), new UnweightedGraph<String>().stronglyConnectedComponents());
+    }
+
+    @Test
+    void strongly_connected_components_of_graph_without_edges() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        assertEquals(Set.of(Set.of(1), Set.of(2), Set.of(3)), g.stronglyConnectedComponents());
+    }
+
+    @Test
+    void strongly_connected_components_of_graph_with_all_nodes_connected() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addUndirectedEdge(1, 2);
+        g.addUndirectedEdge(2, 3);
+        assertEquals(Set.of(Set.of(1, 2, 3)), g.stronglyConnectedComponents());
+    }
+
+    @Test
+    void strongly_connected_components_of_graph_with_all_nodes_connected_also_works_for_strings() {
+        UnweightedGraph<String> g = new UnweightedGraph<>();
+        g.addNode("Enno");
+        g.addNode("Cori");
+        g.addUndirectedEdge("Enno", "Cori");
+
+        assertEquals(Set.of(Set.of("Enno", "Cori")), g.stronglyConnectedComponents());
+    }
+
+    @Test
+    void strongly_connected_components_of_graph_with_three_scss() {
+        /*
+                  1 <----->  2 <---> 3
+                  |
+                  |
+                  v
+                  4  ----->  5 ---->  6  --> 7 <---> 8 <---> 9
+                  ^                   |
+                  |                   |
+                   -------------------
+         */
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNodes(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9));
+        g.addDirectedEdges(List.of(
+            new Edge.UnweightedEdge<>(1, 2),
+            new Edge.UnweightedEdge<>(2, 1),
+            new Edge.UnweightedEdge<>(2, 3),
+            new Edge.UnweightedEdge<>(3, 2),
+            new Edge.UnweightedEdge<>(1, 4),
+            new Edge.UnweightedEdge<>(4, 5),
+            new Edge.UnweightedEdge<>(5, 6),
+            new Edge.UnweightedEdge<>(6, 4),
+            new Edge.UnweightedEdge<>(6, 7),
+            new Edge.UnweightedEdge<>(7, 8),
+            new Edge.UnweightedEdge<>(8, 7),
+            new Edge.UnweightedEdge<>(8, 9),
+            new Edge.UnweightedEdge<>(9, 8)
+        ));
+        assertEquals(Set.of(Set.of(1, 2, 3), Set.of(4, 5, 6), Set.of(7, 8, 9)), g.stronglyConnectedComponents());
+    }
+
+    @Test
+    void strongly_connected_components_of_graph_with_three_scss_more_edges() {
+        /*
+                  1 <----->  2 <--->  3  ----
+                  |          |        |      |
+                  |          |        |      |
+                  v          v        v      v
+                  4  ----->  5 ---->  6  --> 7 <---> 8 <---> 9
+                  ^                   |
+                  |                   |
+                   -------------------
+         */
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNodes(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9));
+        g.addDirectedEdges(List.of(
+            new Edge.UnweightedEdge<>(1, 2),
+            new Edge.UnweightedEdge<>(2, 1),
+            new Edge.UnweightedEdge<>(2, 3),
+            new Edge.UnweightedEdge<>(3, 2),
+            new Edge.UnweightedEdge<>(1, 4),
+            new Edge.UnweightedEdge<>(4, 5),
+            new Edge.UnweightedEdge<>(5, 6),
+            new Edge.UnweightedEdge<>(6, 4),
+            new Edge.UnweightedEdge<>(6, 7),
+            new Edge.UnweightedEdge<>(7, 8),
+            new Edge.UnweightedEdge<>(8, 7),
+            new Edge.UnweightedEdge<>(8, 9),
+            new Edge.UnweightedEdge<>(9, 8),
+            new Edge.UnweightedEdge<>(2, 5),
+            new Edge.UnweightedEdge<>(3, 6),
+            new Edge.UnweightedEdge<>(3, 7)
+        ));
+        assertEquals(Set.of(Set.of(1, 2, 3), Set.of(4, 5, 6), Set.of(7, 8, 9)), g.stronglyConnectedComponents());
+    }
+
+    @Test
+    void strongly_connected_components_of_graph_with_two_scss() {
+        /*
+                  1 <----->  2 <--->  3  ----
+                  |          |        ^      |
+                  |          |        |      |
+                  v          v        v      v
+                  4  ----->  5 ---->  6  --> 7 <---> 8 <---> 9
+                  ^                   |
+                  |                   |
+                   -------------------
+         */
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNodes(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9));
+        g.addDirectedEdges(List.of(
+            new Edge.UnweightedEdge<>(1, 2),
+            new Edge.UnweightedEdge<>(2, 1),
+            new Edge.UnweightedEdge<>(2, 3),
+            new Edge.UnweightedEdge<>(3, 2),
+            new Edge.UnweightedEdge<>(1, 4),
+            new Edge.UnweightedEdge<>(4, 5),
+            new Edge.UnweightedEdge<>(5, 6),
+            new Edge.UnweightedEdge<>(6, 4),
+            new Edge.UnweightedEdge<>(6, 7),
+            new Edge.UnweightedEdge<>(7, 8),
+            new Edge.UnweightedEdge<>(8, 7),
+            new Edge.UnweightedEdge<>(8, 9),
+            new Edge.UnweightedEdge<>(9, 8),
+            new Edge.UnweightedEdge<>(2, 5),
+            new Edge.UnweightedEdge<>(3, 6),
+            new Edge.UnweightedEdge<>(3, 7),
+            new Edge.UnweightedEdge<>(6, 3) // this connects two otherwise independent SCCs
+        ));
+        assertEquals(Set.of(Set.of(1, 2, 3, 4, 5, 6), Set.of(7, 8, 9)), g.stronglyConnectedComponents());
+    }
+
+    @Test
+    void strongly_connected_components_of_graph_with_three_scss_and_some_sattelites() {
+         /*
+                  1 <----->  2 <--->  3  ----
+                  |          |        |      |             13
+                  |          |        |      |              |
+                  v          v        v      v              v
+            10 -> 4  ----->  5 ---->  6  --> 7 <---> 8 <---> 9 <--- 11 <--12
+                  ^                   |
+                  |                   |
+                   -------------------
+         */
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNodes(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13));
+        g.addDirectedEdges(List.of(
+            new Edge.UnweightedEdge<>(1, 2),
+            new Edge.UnweightedEdge<>(2, 1),
+            new Edge.UnweightedEdge<>(2, 3),
+            new Edge.UnweightedEdge<>(3, 2),
+            new Edge.UnweightedEdge<>(1, 4),
+            new Edge.UnweightedEdge<>(4, 5),
+            new Edge.UnweightedEdge<>(5, 6),
+            new Edge.UnweightedEdge<>(6, 4),
+            new Edge.UnweightedEdge<>(6, 7),
+            new Edge.UnweightedEdge<>(7, 8),
+            new Edge.UnweightedEdge<>(8, 7),
+            new Edge.UnweightedEdge<>(8, 9),
+            new Edge.UnweightedEdge<>(9, 8),
+            new Edge.UnweightedEdge<>(2, 5),
+            new Edge.UnweightedEdge<>(3, 6),
+            new Edge.UnweightedEdge<>(3, 7),
+            new Edge.UnweightedEdge<>(10, 4),
+            new Edge.UnweightedEdge<>(11, 9),
+            new Edge.UnweightedEdge<>(12, 11),
+            new Edge.UnweightedEdge<>(13, 9)
+        ));
+        assertEquals(
+            Set.of(Set.of(1, 2, 3), Set.of(4, 5, 6), Set.of(7, 8, 9), Set.of(10), Set.of(11), Set.of(12), Set.of(13)),
+            g.stronglyConnectedComponents()
+        );
     }
 
 }
