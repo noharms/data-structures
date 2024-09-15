@@ -6,9 +6,59 @@ import java.util.List;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GraphTest {
+
+    @Test
+    void transpose_empty_graph_gives_empty() {
+        WeightedGraph<Integer> g = new WeightedGraph<>();
+        assertEquals(g, g.transpose());
+    }
+
+    @Test
+    void transpose_graph_without_edges_gives_same_graph() {
+        WeightedGraph<Integer> g = new WeightedGraph<>();
+        g.addNodes(List.of(1, 2, 3, 4));
+        assertEquals(g, g.transpose());
+    }
+
+    @Test
+    void transpose_graph_with_one_edge_gives_opposite_edge() {
+        WeightedGraph<Integer> g = new WeightedGraph<>();
+        g.addNodes(List.of(1, 2, 3, 4));
+        Edge.WeightedEdge<Integer> from1To2 = new Edge.WeightedEdge<>(1, 2, 42);
+        g.addDirectedEdges(Set.of(from1To2));
+
+        assertEquals(g.nodes(), g.transpose().nodes());
+        assertEquals(Set.of(from1To2.opposite()), g.transpose().edges());
+    }
+
+    @Test
+    void transpose_graph_with_multiple_edge_gives_opposite_edges() {
+        WeightedGraph<Integer> g = new WeightedGraph<>();
+        g.addNodes(List.of(1, 2, 3, 4));
+        Edge.WeightedEdge<Integer> from1To2 = new Edge.WeightedEdge<>(1, 2, 42);
+        Edge.WeightedEdge<Integer> from1To3 = new Edge.WeightedEdge<>(1, 3, 43);
+        Edge.WeightedEdge<Integer> from2To4 = new Edge.WeightedEdge<>(2, 4, 44);
+        g.addDirectedEdges(Set.of(from1To2, from1To3, from2To4));
+
+        assertEquals(g.nodes(), g.transpose().nodes());
+        assertEquals(Set.of(from1To2.opposite(), from1To3.opposite(), from2To4.opposite()), g.transpose().edges());
+    }
+
+    @Test
+    void transpose_of_transpose_gives_back_original() {
+        WeightedGraph<Integer> g = new WeightedGraph<>();
+        g.addNodes(List.of(1, 2, 3, 4));
+        Edge.WeightedEdge<Integer> from1To2 = new Edge.WeightedEdge<>(1, 2, 42);
+        Edge.WeightedEdge<Integer> from1To3 = new Edge.WeightedEdge<>(1, 3, 43);
+        Edge.WeightedEdge<Integer> from2To4 = new Edge.WeightedEdge<>(2, 4, 44);
+        g.addDirectedEdges(Set.of(from1To2, from1To3, from2To4));
+
+        assertEquals(g, g.transpose().transpose());
+    }
+
 
     @Test
     void weakly_connected_components_of_empty_graph() {
@@ -120,6 +170,5 @@ class GraphTest {
 
         assertEquals(Set.of(Set.of("Enno", "Cori", "Moritz", "Niclas")), g.weaklyConnectedComponents());
     }
-
 
 }
