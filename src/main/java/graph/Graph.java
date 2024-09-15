@@ -173,12 +173,13 @@ public abstract class Graph<T> {
         return result;
     }
 
-    private static <V> void dfsRecurse(V node, Graph<V> g, Set<V> result) {
-        result.add(node);
+    private static <V> void dfsRecurse(V node, Graph<V> g, Set<V> visited) {
+        if (visited.contains(node)) {
+            return;
+        }
+        visited.add(node);
         for (V neighbor : g.neighbors(node)) {
-            if (!result.contains(neighbor)) {
-                dfsRecurse(neighbor, g, result);
-            }
+            dfsRecurse(neighbor, g, visited);
         }
     }
 
