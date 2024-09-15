@@ -236,5 +236,19 @@ public class WeightedGraph<T> extends Graph<T> {
             return priority - o.priority;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        WeightedGraph<?> that = (WeightedGraph<?>) o;
+        return Objects.equals(nodesToEdges, that.nodesToEdges);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), nodesToEdges);
+    }
 }
 

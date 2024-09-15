@@ -187,4 +187,17 @@ public class UnweightedGraph<T> extends Graph<T> {
         return set.stream().filter(node -> !filterOut.contains(node)).collect(Collectors.toSet());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        UnweightedGraph<?> that = (UnweightedGraph<?>) o;
+        return Objects.equals(nodeToNeighbors, that.nodeToNeighbors);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), nodeToNeighbors);
+    }
 }
