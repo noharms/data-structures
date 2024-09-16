@@ -86,6 +86,28 @@ public abstract class Graph<T> {
         return allEdges.stream().allMatch(edge -> allEdges.contains(edge.opposite()));
     }
 
+    public boolean hasCycle() {
+        for (T node : nodes()) {
+            if (dfsHasCycle(node, new HashSet<>())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean dfsHasCycle(T node, Set<T> visited) {
+        if (visited.contains(node)) {
+            return true;
+        }
+        visited.add(node);
+        for (T neighbor : neighbors(node)) {
+            if (dfsHasCycle(neighbor, visited)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void throwIfFound(T value) {
         if (contains(value)) {
             String msg = "Duplicate nodes are not allowed - %s already exists in graph".formatted(value);
@@ -279,6 +301,8 @@ public abstract class Graph<T> {
     }
 
     /**
+     * Use Kosaraju's algorithm to detect the strongly connected components of a graph in O(V + E) time, O(V + E) space.
+     * <br><br>
      * A component of a graph is a maximal subset of nodes and edges in which there is a path from any single node to
      * any other node, i.e. all nodes are pairwise connected. Maximal means that the component is defined to contain all
      * connected nodes (one cannot leave out a connected node for a set of nodes to be called a component).

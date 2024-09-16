@@ -6,9 +6,102 @@ import java.util.List;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GraphTest {
+
+    @Test
+    void has_cycles_false_on_empty_graph() {
+        assertFalse(new UnweightedGraph<>().hasCycle());
+    }
+
+    @Test
+    void has_cycles_false_on_one_node_graph() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+
+        assertFalse(g.hasCycle());
+    }
+
+    @Test
+    void has_cycles_false_on_multiple_nodes_no_edges() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+
+        assertFalse(g.hasCycle());
+    }
+
+    @Test
+    void has_cycles_false_on_multiple_nodes_all_connected_by_directed_edge_no_cycles() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(1, 3);
+
+        assertFalse(g.hasCycle());
+    }
+
+    @Test
+    void has_cycles_false_on_multiple_nodes_some_connected_by_directed_edge_some_unconnected_no_cycles() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addNode(4);
+        g.addNode(5);
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(1, 3);
+
+        assertFalse(g.hasCycle());
+    }
+
+    @Test
+    void has_cycles_true_on_two_nodes_with_undirected_edge() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addUndirectedEdge(1, 2);
+
+        assertTrue(g.hasCycle());
+    }
+
+    @Test
+    void has_cycles_true_on_three_nodes_with_directed_cyclic_connection() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(2, 3);
+        g.addDirectedEdge(3, 1);
+
+        assertTrue(g.hasCycle());
+    }
+
+    @Test
+    void has_cycles_true_on_multiple_nodes_with_one_small_cycle() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addNode(4);
+        g.addNode(5);
+        g.addNode(6);
+        g.addNode(7);
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(3, 4);
+        g.addDirectedEdge(5, 4);
+        g.addDirectedEdge(4, 6);
+        g.addDirectedEdge(6, 7);
+        g.addDirectedEdge(7, 4);
+
+        assertTrue(g.hasCycle());
+    }
 
     @Test
     void transpose_empty_graph_gives_empty() {
