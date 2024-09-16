@@ -1,4 +1,4 @@
-package tree;
+package tree.directed;
 
 import com.google.common.collect.Sets;
 import queue.QueueDLLBased;
@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toMap;
-import static tree.TreeNodeWithLevel.decorateWithLevel;
+import static tree.directed.TreeNodeWithLevel.decorateWithLevel;
 
 /**
  * A rooted tree is a graph with a root node to which all nodes are connected and which does not have cycles.

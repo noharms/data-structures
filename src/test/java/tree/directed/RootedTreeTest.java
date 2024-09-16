@@ -1,4 +1,4 @@
-package tree;
+package tree.directed;
 
 import org.junit.jupiter.api.Test;
 
