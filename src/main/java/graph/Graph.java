@@ -108,6 +108,48 @@ public abstract class Graph<T> {
         return false;
     }
 
+    // non-trivial means there is a cycle which involves at least three distinct nodes
+    public boolean hasNonTrivialCycle() {
+        for (T node : nodes()) {
+            if (dfsHasNonTrivialCycle(node, new HashSet<>(), new LinkedList<>())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean dfsHasNonTrivialCycle(T node, Set<T> visited, List<T> path) {
+        if (visited.contains(node)) {
+            final boolean currentEqualsPrevPrev = path.size() > 1 && path.get(path.size() - 2).equals(node);
+            return !currentEqualsPrevPrev;
+        }
+        visited.add(node);
+        path.addLast(node);
+        for (T neighbor : neighbors(node)) {
+            if (dfsHasNonTrivialCycle(neighbor, visited, path)) {
+                return true;
+            }
+        }
+        path.removeLast();
+        return false;
+    }
+
+    /**
+     * Simple O(V * (V+E)) algorithm. For better performance use {@link Graph#stronglyConnectedComponents()}.
+     * <br><br>
+     * Note for undirected graphs, strongly connected is equivalent to weakly connected but for directed graphs, it
+     * is stricter because it demands that for every pair of nodes (n1, n2) there is a path in the graph.
+     */
+    public boolean isStronglyConnected() {
+        for (T node : nodes()) {
+            final Set<T> nodesFromOneDFS = dfsTraversal(node, this);
+            if (nodesFromOneDFS.size() !=nodes().size()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     void throwIfFound(T value) {
         if (contains(value)) {
             String msg = "Duplicate nodes are not allowed - %s already exists in graph".formatted(value);

@@ -104,6 +104,226 @@ class GraphTest {
     }
 
     @Test
+    void has_non_trivial_cycle_false_on_empty_graph() {
+        assertFalse(new UnweightedGraph<>().hasNonTrivialCycle());
+    }
+
+    @Test
+    void has_nontrivial_cycle_false_on_one_node_graph() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+
+        assertFalse(g.hasNonTrivialCycle());
+    }
+
+    @Test
+    void has_nontrivial_cycle_false_on_multiple_nodes_no_edges() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+
+        assertFalse(g.hasNonTrivialCycle());
+    }
+
+    @Test
+    void has_nontrivial_cycle_false_on_multiple_nodes_all_connected_by_directed_edge_no_cycles() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(1, 3);
+
+        assertFalse(g.hasNonTrivialCycle());
+    }
+
+    @Test
+    void has_nontrivial_cycle_false_on_multiple_nodes_some_connected_by_directed_edge_some_unconnected_no_cycles() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addNode(4);
+        g.addNode(5);
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(1, 3);
+
+        assertFalse(g.hasNonTrivialCycle());
+    }
+
+    @Test
+    void has_nontrivial_cycle_false_on_two_nodes_with_undirected_edge() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addUndirectedEdge(1, 2);
+
+        assertTrue(g.hasCycle());
+        assertFalse(g.hasNonTrivialCycle());
+    }
+
+    @Test
+    void has_nontrivial_cycle_true_on_three_nodes_with_directed_cyclic_connection() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(2, 3);
+        g.addDirectedEdge(3, 1);
+
+        assertTrue(g.hasNonTrivialCycle());
+    }
+
+    @Test
+    void has_nontrivial_cycle_true_on_multiple_nodes_with_one_small_cycle() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addNode(4);
+        g.addNode(5);
+        g.addNode(6);
+        g.addNode(7);
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(3, 4);
+        g.addDirectedEdge(5, 4);
+        g.addDirectedEdge(4, 6);
+        g.addDirectedEdge(6, 7);
+        g.addDirectedEdge(7, 4);
+
+        assertTrue(g.hasNonTrivialCycle());
+    }
+
+    @Test
+    void has_nontrivial_cycle_false_if_only_one_undirected_edge_but_otherwise_no_cycle() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addNode(4);
+        g.addNode(5);
+        g.addNode(6);
+        g.addNode(7);
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(3, 4);
+        g.addDirectedEdge(5, 4);
+        g.addUndirectedEdge(4, 6);
+        g.addDirectedEdge(6, 7);
+
+        assertFalse(g.hasNonTrivialCycle());
+    }
+
+    @Test
+    void is_connected_is_false_on_empty_graph() {
+        assertTrue(new UnweightedGraph<>().isStronglyConnected());
+    }
+
+    @Test
+    void is_connected_is_false_on_one_node_graph() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+
+        assertTrue(g.isStronglyConnected());
+    }
+
+    @Test
+    void is_connected_is_false_on_multiple_node_graph() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNodes(List.of(1, 2, 3));
+
+        assertFalse(g.isStronglyConnected());
+    }
+
+    @Test
+    void is_connected_is_true_on_two_node_graph_with_undirected_edge() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNodes(List.of(1, 2));
+        g.addUndirectedEdge(1, 2);
+
+        assertTrue(g.isStronglyConnected());
+    }
+
+    @Test
+    void is_connected_is_false_on_two_node_graph_with_directed_edge() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNodes(List.of(1, 2));
+        g.addDirectedEdge(1, 2);
+
+        assertFalse(g.isStronglyConnected());
+    }
+
+    @Test
+    void is_connected_is_false_on_two_node_graph_with_directed_edge_other_direction() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNodes(List.of(1, 2));
+        g.addDirectedEdge(2, 1);
+
+        assertFalse(g.isStronglyConnected());
+    }
+
+    @Test
+    void is_connected_is_false_on_multiple_node_graph_with_only_partial_connections() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNodes(List.of(1, 2, 3));
+        g.addUndirectedEdge(1, 2);
+
+        assertFalse(g.isStronglyConnected());
+    }
+
+    @Test
+    void is_connected_is_true_on_one_big_directed_cycle() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNodes(List.of(1, 2, 3, 4, 5, 6, 7));
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(2, 3);
+        g.addDirectedEdge(3, 4);
+        g.addDirectedEdge(4, 5);
+        g.addDirectedEdge(5, 6);
+        g.addDirectedEdge(6, 7);
+        g.addDirectedEdge(7, 1);
+
+        assertTrue(g.isStronglyConnected());
+    }
+
+    @Test
+    void is_connected_is_false_on_one_big_directed_cycle_plus_separate_node() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNodes(List.of(1, 2, 3, 42, 4, 5, 6, 7));
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(2, 3);
+        g.addDirectedEdge(3, 4);
+        g.addDirectedEdge(4, 5);
+        g.addDirectedEdge(5, 6);
+        g.addDirectedEdge(6, 7);
+        g.addDirectedEdge(7, 1);
+
+        assertFalse(g.isStronglyConnected());
+    }
+
+    @Test
+    void is_connected_is_true_on_one_big_directed_cycle_plus_undirected_branch_to_second_cycle() {
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNodes(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(2, 3);
+        g.addDirectedEdge(3, 4);
+        g.addDirectedEdge(4, 5);
+        g.addDirectedEdge(5, 6);
+        g.addDirectedEdge(6, 7);
+        g.addDirectedEdge(7, 1);
+        g.addUndirectedEdge(7, 8);
+        g.addDirectedEdge(8, 9);
+        g.addDirectedEdge(9, 10);
+        g.addDirectedEdge(10, 8);
+
+        assertTrue(g.isStronglyConnected());
+    }
+
+
+    @Test
     void transpose_empty_graph_gives_empty() {
         WeightedGraph<Integer> g = new WeightedGraph<>();
         assertEquals(g, g.transpose());
