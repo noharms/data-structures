@@ -84,6 +84,29 @@ class GraphTest {
     }
 
     @Test
+    void has_cycle_false_on_three_nodes_forming_a_diamond_connection() {
+        /*
+                 1
+               /   \
+              v     v
+              2     3
+              |     |
+              -> 4 <-
+         */
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addNode(4);
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(1, 3);
+        g.addDirectedEdge(2, 4);
+        g.addDirectedEdge(3, 4);
+
+        assertFalse(g.hasCycle());
+    }
+
+    @Test
     void has_cycles_true_on_multiple_nodes_with_one_small_cycle() {
         UnweightedGraph<Integer> g = new UnweightedGraph<>();
         g.addNode(1);

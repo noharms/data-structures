@@ -88,23 +88,31 @@ public abstract class Graph<T> {
 
     public boolean hasCycle() {
         for (T node : nodes()) {
-            if (dfsHasCycle(node, new HashSet<>())) {
+            if (dfsHasCycle(node, new HashSet<>(), new LinkedList<>())) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean dfsHasCycle(T node, Set<T> visited) {
-        if (visited.contains(node)) {
+    private boolean dfsHasCycle(T node, Set<T> visited, LinkedList<T> recursionStack) {
+        if (recursionStack.contains(node)) {
+            // if a node was already visited before in the current recursion stack, it is a cycle
             return true;
+        } else if (visited.contains(node)) {
+            // if a node was visited but not in the current recursion stack it is fine; we already checked its sub-graph
+            // e.g. in directed diamond formations of 4 nodes we visit the bottom node on two paths but not on a cycle
+            return false;
         }
         visited.add(node);
+        recursionStack.push(node);
+
         for (T neighbor : neighbors(node)) {
-            if (dfsHasCycle(neighbor, visited)) {
+            if (dfsHasCycle(neighbor, visited, recursionStack)) {
                 return true;
             }
         }
+        recursionStack.pop();
         return false;
     }
 
