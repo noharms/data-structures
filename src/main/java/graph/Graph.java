@@ -142,6 +142,29 @@ public abstract class Graph<T> {
         return false;
     }
 
+    public boolean isTree() {
+        if (isUndirected()) {
+            return isWeaklyConnected() && !hasNonTrivialCycle();
+        } else {
+            final Graph<T> undirected = undirectedEquivalent();
+            return undirected.isWeaklyConnected() && !undirected.hasNonTrivialCycle() && !hasCycle();
+        }
+    }
+
+    private Graph<T> undirectedEquivalent() {
+        if (isUndirected()) {
+            return copy();
+        } else {
+            final Graph<T> result = copyWithoutEdges();
+            result.addUndirectedEdges(edges());
+            return result;
+        }
+    }
+
+    private boolean isWeaklyConnected() {
+        return weaklyConnectedComponents().size() == 1;
+    }
+
     /**
      * Simple O(V * (V+E)) algorithm. For better performance use {@link Graph#stronglyConnectedComponents()}.
      * <br><br>
