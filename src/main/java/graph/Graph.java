@@ -143,7 +143,7 @@ public abstract class Graph<T> {
     public boolean isStronglyConnected() {
         for (T node : nodes()) {
             final Set<T> nodesFromOneDFS = dfsTraversal(node, this);
-            if (nodesFromOneDFS.size() !=nodes().size()) {
+            if (nodesFromOneDFS.size() != nodes().size()) {
                 return false;
             }
         }
@@ -211,9 +211,7 @@ public abstract class Graph<T> {
     }
 
     Set<T> unvisitedNeighbors(T current, Set<T> visited) {
-        return neighbors(current).stream()
-            .filter(neighbor -> !visited.contains(neighbor))
-            .collect(Collectors.toSet());
+        return neighbors(current).stream().filter(neighbor -> !visited.contains(neighbor)).collect(Collectors.toSet());
     }
 
     static <U> List<U> reconstructPath(U endNode, Map<U, U> nodeToParent) {
@@ -277,6 +275,7 @@ public abstract class Graph<T> {
      * <br><br>
      * O(V + E) in space and time, V number of vertices (=nodes), E number of edges
      * <br><br>
+     *
      * @throws if the graph is not a directed, acyclic graph
      */
     public List<T> topologicalSort() {
@@ -284,8 +283,7 @@ public abstract class Graph<T> {
             throw new IllegalStateException("Topological sort can only be applied on a directed graph.");
         }
         final Map<T, Integer> nodeToDependencyCount = countUpstreamNeighbors();
-        final Set<T> sources = nodeToDependencyCount
-            .entrySet()
+        final Set<T> sources = nodeToDependencyCount.entrySet()
             .stream()
             .filter(e -> e.getValue() == 0)
             .map(Map.Entry::getKey)
@@ -313,7 +311,9 @@ public abstract class Graph<T> {
         if (visited.size() == nodes().size()) {
             return result;
         } else {
-            throw new IllegalStateException("The graph has cyclic dependencies, topological sort impossible. First find SCCs, then condense SCCs to supernodes, then use this API.");
+            throw new IllegalStateException(
+                "The graph has cyclic dependencies, topological sort impossible. First find SCCs, then condense SCCs " +
+                    "to supernodes, then use this API.");
         }
     }
 
@@ -404,9 +404,8 @@ public abstract class Graph<T> {
     @Override
     public boolean equals(Object other) {
         // this works, assuming T implements equals
-        return other instanceof Graph<?> otherGraph
-            && this.nodes().equals(otherGraph.nodes())
-            && this.edges().equals(otherGraph.edges());
+        return other instanceof Graph<?> otherGraph && this.nodes().equals(otherGraph.nodes()) && this.edges().equals(
+            otherGraph.edges());
     }
 
     @Override
