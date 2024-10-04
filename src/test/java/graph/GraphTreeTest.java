@@ -279,6 +279,71 @@ public class GraphTreeTest {
     }
 
     @Test
+    void three_nodes_with_a_linear_path_of_directed_edges_are_a_tree() {
+        /*
+         *               1
+         *               |
+         *               v
+         *               2
+         *               |
+         *               v
+         *               3
+         */
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(2, 3);
+
+        assertTrue(g.isTree());
+    }
+
+    @Test
+    void three_nodes_with_a_sink_and_two_sources_are_a_tree() {
+        /*
+         *               1
+         *               |
+         *               v
+         *               2
+         *               ^
+         *               |
+         *               3
+         */
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(3, 2);
+
+        assertTrue(g.isTree());
+    }
+
+    @Test
+    void three_nodes_with_a_linear_path_and_one_directed_edge_but_one_undirected_edge_are_not_a_tree() {
+        /*
+         *               1
+         *               |
+         *               v
+         *               2
+         *               ^
+         *               |
+         *               v
+         *               3
+         */
+        UnweightedGraph<Integer> g = new UnweightedGraph<>();
+        g.addNode(1);
+        g.addNode(2);
+        g.addNode(3);
+        g.addDirectedEdge(1, 2);
+        g.addDirectedEdge(2, 3);
+        g.addDirectedEdge(3, 2);
+
+        assertFalse(g.isTree());
+    }
+
+    @Test
     void three_nodes_with_directed_edges_are_a_tree() {
 
         /*
