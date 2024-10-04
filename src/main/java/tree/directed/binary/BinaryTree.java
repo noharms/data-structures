@@ -49,9 +49,9 @@ public class BinaryTree<T> {
         if (node == null) {
             return -1;
         }
-        final int heightLeft = 1 + heightRecursive(node.left);
-        final int heightRight = 1 + heightRecursive(node.right);
-        return Math.max(heightLeft, heightRight);
+        final int heightLeft = heightRecursive(node.left);
+        final int heightRight = heightRecursive(node.right);
+        return 1 + Math.max(heightLeft, heightRight);
     }
 
     public int depth(BinaryTreeNode<T> node) {
