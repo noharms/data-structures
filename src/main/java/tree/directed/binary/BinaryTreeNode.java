@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class BinaryTreeNode<T> {
 
-    private final T value;
+    final T value;
     @Nullable BinaryTreeNode<T> left;
     @Nullable BinaryTreeNode<T> right;
 

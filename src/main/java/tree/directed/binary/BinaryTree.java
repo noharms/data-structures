@@ -2,12 +2,35 @@ package tree.directed.binary;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static tree.directed.binary.BinaryTreeTraversals.*;
+
 public class BinaryTree<T> {
 
     private final BinaryTreeNode<T> root;
 
     public BinaryTree(BinaryTreeNode<T> root) {
         this.root = root;
+    }
+
+    public List<T> inOrder() {
+        final List<T> result = new ArrayList<>();
+        inOrderRecursive(root, result);
+        return result;
+    }
+
+    public List<T> preOrder() {
+        final List<T> result = new ArrayList<>();
+        preOrderRecursive(root, result);
+        return result;
+    }
+
+    public List<T> postOrder() {
+        final List<T> result = new ArrayList<>();
+        postOrderRecursive(root, result);
+        return result;
     }
 
     public int height() {
