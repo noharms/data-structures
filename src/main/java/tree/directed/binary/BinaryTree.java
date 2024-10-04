@@ -33,6 +33,14 @@ public class BinaryTree<T> {
         return result;
     }
 
+    public List<T> topToBottomLeftToRight() {
+        final List<T> result = new ArrayList<>();
+        if (root != null) {
+            traverseFromTopFromLeft(root, result);
+        }
+        return result;
+    }
+
     public int height() {
         return heightRecursive(root);
     }
